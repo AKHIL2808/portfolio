@@ -96,9 +96,9 @@ No new npm dependencies. The GitHub Actions used (`actions/checkout`, `actions/s
 
 ## Tests
 No new unit tests for the workflow itself; GitHub runs it, and that run is the test. The checks:
-1. **CI green:** push this branch. The `checks` job passes, and `gh run list --branch shot/f-1-w-05-…` shows success.
-2. **Preview works:** Vercel posts a preview deployment on the PR, and `curl -s <preview-url>` returns the placeholder page (`<h1>Midnight to Dawn</h1>`). The Vercel project's Git LFS setting is on, and the build log shows the LFS fetch. The served-asset proof waits for the first LFS file in `public/` (see Open question 3).
-3. **A failing check blocks the merge:** on a throwaway branch `ci/failing-check-probe`, add one deliberately failing assertion, push it, and open a draft PR. CI goes red, and the merge is blocked by whichever mechanism Open question 1 settles. Then close the PR and delete the branch.
+1. ~~Blocking merges.~~ Resolved 2026-11-10: (a) soft block via `/ship-shot`; ruleset at Z.6 when public.
+2. ~~`pnpm build` in CI?~~ Resolved: no; Vercel's build check covers it.
+3. ~~Proving LFS on Vercel.~~ Resolved: LFS on now; served-asset proof at F.2/B.07.
 4. `pnpm typecheck && pnpm lint && pnpm test` stay green locally (only docs and config change). One unit test is added to `tests/unit/foundation.test.ts`'s package checks: `.env.example` exists, lists exactly `RESEND_API_KEY` and `CONTACT_TO_EMAIL`, and has no values. That keeps it in sync with CLAUDE.md.
 
 ## Definition of done
@@ -118,12 +118,22 @@ No new unit tests for the workflow itself; GitHub runs it, and that run is the t
 - Blender in CI (the `pnpm blender:*` scripts run locally; F.2).
 
 ## Open questions
-1. **Blocking merges on a private free repo.** GitHub only enforces required status checks (branch protection or rulesets) on public repos or with GitHub Pro. Options:
+1. ~~Blocking merges.~~ Resolved 2026-11-10: (a) soft block via `/ship-shot`; ruleset at Z.6 when public.
    - **(a) Keep the repo private, soft block.** `/ship-shot` already refuses to merge when a check fails (its Step 8), and CI makes that check real. Nothing stops a manual merge in the GitHub UI, though.
    - **(b) Make the repo public** and add a ruleset requiring `checks` on `main`. Free, and a hard block. But the repo, including the docs and plan, becomes public; it's a portfolio, so that may be fine or even wanted.
    - **(c) GitHub Pro** (paid), then a ruleset; hard block, stays private.
    - **Proposed: (a) now.** Record it in `progress.md`, then move to (b) at launch (Z.6) when the site goes public anyway. The Done when's "blocks the merge" is then proven through `/ship-shot` refusing, and the spec says so plainly. Your call; I won't change visibility or plan without you.
-2. **Run `pnpm build` in CI too?** Vercel already builds every push, and a failed build shows as a red Vercel check on the PR. Proposed: no separate build step in CI (it saves about 1 min per run), relying on Vercel's check. Revisit if Vercel and CI disagree.
-3. **Proving Git LFS works on Vercel.** Nothing in `public/` is LFS-tracked yet (the only LFS files are `docs/images/*.png`, which aren't served). Proposed: turn LFS on now, and confirm it from the Vercel build log. Do the real served-asset check when the first GLB lands in `public/models/` (F.2/B.07), as an item in its Done when.
-4. **LFS bandwidth.** GitHub's free LFS quota is 1 GB storage and 1 GB/month bandwidth, and each Vercel build pulls LFS files. Proposed: CI skips LFS (`lfs: false`); watch usage from F.2 on, when GLBs and renders arrive. Noted in `progress.md` › Open issues.
-5. **Review.** Proposed: run `/test-shot` and `/review-shot` with quality + **security** (workflow permissions, SHA pinning, env handling, secret hygiene); performance has nothing to check.
+2. ~~`pnpm build` in CI?~~ Resolved: no; Vercel's build check covers it.
+3. ~~Proving LFS on Vercel.~~ Resolved: LFS on now; served-asset proof at F.2/B.07.
+4. ~~LFS bandwidth.~~ Resolved: CI uses `lfs: false`; watch from F.2 (in progress.md).
+5. ~~Review.~~ Resolved: `/test-shot`, then `/review-shot` with quality + security.
+
+## Results (2026-11-10)
+
+| Check | Evidence |
+|---|---|
+| Action SHAs | `actions/checkout` v7.0.1 `3d3c42e5aac5ba805825da76410c181273ba90b1` · `pnpm/action-setup` v6.1.1 `73e46992e05b19abd31f2f3c20e0e7370d762115` · `actions/setup-node` v7.1.0 `949feb2413d6458794dcd2491c4babbbce0c15c1` (inputs checked against each `action.yml` at that SHA) |
+| CI green on the branch | https://github.com/AKHIL2808/portfolio/actions/runs/42679723780 (frozen install, typecheck, lint, test all ✓) |
+| Failing check stops the merge | probe branch `ci/failing-check-probe`, draft PR #5: runs 42679965183 and 42679975219 failed on the deliberate test; `gh pr checks 5` exit 1 → merge refused; PR closed unmerged, branch deleted |
+| Vercel production | https://portfolio-chi-ten-ogbpwcpzyp.vercel.app/ → 200, `<h1>Midnight to Dawn</h1>`; Git LFS on, Node 22.x (set by the director) |
+| Vercel preview | see the PR's Vercel check (first branch push after connecting) |
