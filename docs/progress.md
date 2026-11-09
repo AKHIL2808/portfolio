@@ -10,7 +10,7 @@ Stage F: 3/29 · updated by `/ship-shot` at the end of every item.
 
 ## Next
 
-- F.1/W.04: Blender MCP connected to Claude Code
+- F.1/W.05: CI and Vercel preview deploys
 
 ## Open issues
 
@@ -52,5 +52,8 @@ Stage F: 3/29 · updated by `/ship-shot` at the end of every item.
 
 ### Environment
 
+- Blender 5.2.2 LTS (`/usr/bin/blender`); Blender MCP add-on 1.8 (protocol 15, up to date); Claude Code MCP server `uvx blender-mcp`, user-scope in `~/.claude.json` (recreate with `claude mcp add blender -- uvx blender-mcp`; update the add-on with `uvx mcp-for-blender install-addon`).
+- MCP check 2026-11-10: create / look / remove OK in an unsaved General file, scene unchanged afterwards (F.1/W.04).
+- Blender MCP telemetry disabled (2026-11-10); asset libraries (Poly Haven, Sketchfab, Poly Pizza) and 3D generators are all off.
 - The shell prints a zoxide configuration warning on every command (harmless; set `_ZO_DOCTOR=0` or move the zoxide init to the end of `~/.zshrc`).
 - A stray `~/package-lock.json` outside the repo made Turbopack guess the wrong root; `turbopack.root` is pinned in `next.config.ts`.
