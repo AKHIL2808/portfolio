@@ -252,8 +252,14 @@ describe("docs/progress.md layout", () => {
     expect(h2s).toEqual(["Done", "Next", "Open issues"]);
   });
 
-  it("names F.1/W.04 as the next item", () => {
-    expect(section("Next", "Open issues")).toContain("F.1/W.04");
+  // The Next item changes every time an item ships, so check it against the stage file
+  // instead of hard-coding an id: it must name an item that exists there and isn't ticked yet.
+  it("names an unticked build-order item as the next item", () => {
+    const stage = read(".claude/build-order/stage-F.md");
+    const unticked = [...stage.matchAll(/^- \[ \] \*\*([^:*]+):/gm)].map((m) => m[1] ?? "");
+    const next = section("Next", "Open issues");
+    const named = unticked.filter((id) => next.includes(`${id}:`));
+    expect(named, `Next section: ${next.trim()}`).toHaveLength(1);
   });
 
   it("groups Open issues into subsections including the F.1/W.03 conversion decisions", () => {
