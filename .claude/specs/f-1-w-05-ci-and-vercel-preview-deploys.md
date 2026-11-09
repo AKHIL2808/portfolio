@@ -136,4 +136,4 @@ No new unit tests for the workflow itself; GitHub runs it, and that run is the t
 | CI green on the branch | https://github.com/AKHIL2808/portfolio/actions/runs/42679723780 (frozen install, typecheck, lint, test all ✓) |
 | Failing check stops the merge | probe branch `ci/failing-check-probe`, draft PR #5: runs 42679965183 and 42679975219 failed on the deliberate test; `gh pr checks 5` exit 1 → merge refused; PR closed unmerged, branch deleted |
 | Vercel production | https://portfolio-chi-ten-ogbpwcpzyp.vercel.app/ → 200, `<h1>Midnight to Dawn</h1>`; Git LFS on, Node 22.x (set by the director) |
-| Vercel preview | see the PR's Vercel check (first branch push after connecting) |
+| Vercel preview | PR #6: Vercel check ✓; https://portfolio-git-shot-f-1-w-05-ee329f-akhileshs-projects-5b6689cc.vercel.app is behind Vercel Deployment Protection (302 to Vercel login from outside, kept on); the director opened it logged in and confirmed "Midnight to Dawn / Akhilesh Singh" (2026-11-10) |

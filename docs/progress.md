@@ -56,7 +56,7 @@ Stage F: 4/29 · updated by `/ship-shot` at the end of every item.
 ### Environment
 
 - CI: GitHub Actions workflow `CI`, job `checks` (frozen install, typecheck, lint, unit tests) on every push and every PR into `main`; actions pinned by SHA; Node from `.nvmrc` (22).
-- Vercel project `portfolio`: production `main` → https://portfolio-chi-ten-ogbpwcpzyp.vercel.app/ ; every other branch gets a preview URL; Git LFS on; Node.js 22.x; no env vars yet (Act 7 adds `RESEND_API_KEY`, `CONTACT_TO_EMAIL`).
+- Vercel project `portfolio`: production `main` → https://portfolio-chi-ten-ogbpwcpzyp.vercel.app/ ; every other branch gets a preview URL (behind Vercel Deployment Protection: log in to Vercel to view, also on a phone); Git LFS on; Node.js 22.x; no env vars yet (Act 7 adds `RESEND_API_KEY`, `CONTACT_TO_EMAIL`).
 - Blender 5.2.2 LTS (`/usr/bin/blender`); Blender MCP add-on 1.8 (protocol 15, up to date); Claude Code MCP server `uvx blender-mcp`, user-scope in `~/.claude.json` (recreate with `claude mcp add blender -- uvx blender-mcp`; update the add-on with `uvx mcp-for-blender install-addon`).
 - MCP check 2026-11-10: create / look / remove OK in an unsaved General file, scene unchanged afterwards (F.1/W.04).
 - Blender MCP telemetry disabled (2026-11-10); asset libraries (Poly Haven, Sketchfab, Poly Pizza) and 3D generators are all off.
