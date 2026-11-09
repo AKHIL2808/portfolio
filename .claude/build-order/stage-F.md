@@ -1,7 +1,7 @@
 # Build order: Stage F: Foundation and parity setup (F.1–F.4)
 
 - Status: IN PROGRESS
-- Progress: 3/29
+- Progress: 4/29
 - Generated: 2026-11-09
 - Milestone: M0 Setup + M2 Core systems (tdd › Milestones); F.3 materials touch M3 (see Open questions)
 - Prerequisite: none (F is the first stage): OK
@@ -37,7 +37,7 @@
   - Source: plan › Foundation › F.1 (CLAUDE.md, docs/tdd.md, docs/plan.md, docs/progress.md); plan › Working with Claude Code; tdd › Build plan for Claude Code (docs/screenplay.md)
   - Done when: each `.md` contains every section heading of its PDF (spot-checked: plan › Foundation, tdd › Core systems, screenplay Act 1); progress.md exists with the three sections
 
-- [ ] **F.1/W.04: Blender MCP connected to Claude Code** · `Infra`
+- [x] **F.1/W.04: Blender MCP connected to Claude Code** · `Infra`
   - Build: confirm the Blender MCP server answers (`get_addon_status`, `get_scene_info`); record the Blender version in docs/progress.md
   - Files: docs/progress.md
   - Depends on: F.1/W.03

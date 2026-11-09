@@ -1,12 +1,13 @@
 # Progress log
 
-Stage F: 3/29 · updated by `/ship-shot` at the end of every item.
+Stage F: 4/29 · updated by `/ship-shot` at the end of every item.
 
 ## Done
 
 - F.1/W.01: Git repository, Git LFS and folder skeleton (2026-11-09, PR #1)
 - F.1/W.02: Next.js + TypeScript strict + Tailwind, stack installed and pinned (2026-11-09, PR #2)
 - F.1/W.03: Project docs in Markdown + progress log (2026-11-09, PR #3)
+- F.1/W.04: Blender MCP connected to Claude Code (2026-11-10, PR #4)
 
 ## Next
 
