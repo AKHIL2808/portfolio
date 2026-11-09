@@ -50,6 +50,7 @@
   - Depends on: F.1/W.02
   - Source: plan › Foundation › F.1 (CI, Vercel); tdd › Testing and deployment › Deployment 1–3; tdd › Milestones › M0; CLAUDE.md › Critical rules (Secrets)
   - Done when: CI is green on a pushed branch; that branch has a working Vercel preview URL; a deliberately failing check blocks the merge
+  - Note (2026-11-10, director decision): the merge block is a **soft block** via `/ship-shot` (it refuses to merge when any check fails). GitHub branch protection / rulesets are unavailable on a private repo on the free plan, so a manual merge in the GitHub UI is still possible. A ruleset requiring `checks` on `main` is owed at Z.6, when the repo goes public.
 
 ## 2. F.2 · Blender settings and scripts
 
@@ -228,6 +229,7 @@
 
 ## Out of scope for this stage
 
+- GitHub ruleset requiring the `checks` CI job on `main` (deferred from F.1/W.05 to Z.6: needs a public repo or GitHub Pro).
 - `/dev/character` page and any character (Stage C, cast web check).
 - The `MTD_Toon` node group and outline in `blender/library/` as production assets (plan places the toon material in the shared library; tdd › M3).
 - `content/*.ts` files, their zod schemas and `/cv` (tdd › M1; not in plan › Foundation).

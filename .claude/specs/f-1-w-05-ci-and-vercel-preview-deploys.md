@@ -96,13 +96,13 @@ No new npm dependencies. The GitHub Actions used (`actions/checkout`, `actions/s
 
 ## Tests
 No new unit tests for the workflow itself; GitHub runs it, and that run is the test. The checks:
-1. ~~Blocking merges.~~ Resolved 2026-11-10: (a) soft block via `/ship-shot`; ruleset at Z.6 when public.
-2. ~~`pnpm build` in CI?~~ Resolved: no; Vercel's build check covers it.
-3. ~~Proving LFS on Vercel.~~ Resolved: LFS on now; served-asset proof at F.2/B.07.
+1. **CI green:** push this branch. The `checks` job passes, and `gh run list --branch shot/f-1-w-05-…` shows success.
+2. **Preview works:** Vercel posts a preview deployment on the PR, and `curl -s <preview-url>` returns the placeholder page (`<h1>Midnight to Dawn</h1>`). The Vercel project's Git LFS setting is on, and the build log shows the LFS fetch. The served-asset proof waits for the first LFS file in `public/` (see Open question 3).
+3. **A failing check blocks the merge:** on a throwaway branch `ci/failing-check-probe`, add one deliberately failing assertion, push it, and open a draft PR. CI goes red, and the merge is blocked by whichever mechanism Open question 1 settles. Then close the PR and delete the branch.
 4. `pnpm typecheck && pnpm lint && pnpm test` stay green locally (only docs and config change). One unit test is added to `tests/unit/foundation.test.ts`'s package checks: `.env.example` exists, lists exactly `RESEND_API_KEY` and `CONTACT_TO_EMAIL`, and has no values. That keeps it in sync with CLAUDE.md.
 
 ## Definition of done
-- [ ] CI is green on a pushed branch; that branch has a working Vercel preview URL; a deliberately failing check blocks the merge
+- [ ] CI is green on a pushed branch; that branch has a working Vercel preview URL; a deliberately failing check blocks the merge *(soft block via `/ship-shot`, decision 1: GitHub would still allow a manual merge; ruleset at Z.6)*
 - [ ] `.env.example` lists `RESEND_API_KEY` and `CONTACT_TO_EMAIL` with no values; tested
 - [ ] Git LFS is enabled in the Vercel project; Node 22 everywhere (`.nvmrc`, CI, Vercel)
 - [ ] All workflow actions pinned by SHA; workflow permissions read-only
@@ -134,6 +134,6 @@ No new unit tests for the workflow itself; GitHub runs it, and that run is the t
 |---|---|
 | Action SHAs | `actions/checkout` v7.0.1 `3d3c42e5aac5ba805825da76410c181273ba90b1` · `pnpm/action-setup` v6.1.1 `73e46992e05b19abd31f2f3c20e0e7370d762115` · `actions/setup-node` v7.1.0 `949feb2413d6458794dcd2491c4babbbce0c15c1` (inputs checked against each `action.yml` at that SHA) |
 | CI green on the branch | https://github.com/AKHIL2808/portfolio/actions/runs/42679723780 (frozen install, typecheck, lint, test all ✓) |
-| Failing check stops the merge | probe branch `ci/failing-check-probe`, draft PR #5: runs 42679965183 and 42679975219 failed on the deliberate test; `gh pr checks 5` exit 1 → merge refused; PR closed unmerged, branch deleted |
+| Failing check stops the merge (soft block) | probe branch `ci/failing-check-probe`, draft PR #5: runs 42679965183 and 42679975219 failed on the deliberate test. `gh pr checks 5` exited 1, which is the check `/ship-shot` Step 8 relies on, and the guard rule run by hand printed "refusing to merge PR #5" (this was the rule run manually, not `/ship-shot` itself). PR closed unmerged, branch deleted. GitHub itself would still have allowed a manual merge (no ruleset on a private free repo; decision 1). |
 | Vercel production | https://portfolio-chi-ten-ogbpwcpzyp.vercel.app/ → 200, `<h1>Midnight to Dawn</h1>`; Git LFS on, Node 22.x (set by the director) |
 | Vercel preview | PR #6: Vercel check ✓; https://portfolio-git-shot-f-1-w-05-ee329f-akhileshs-projects-5b6689cc.vercel.app is behind Vercel Deployment Protection (302 to Vercel login from outside, kept on); the director opened it logged in and confirmed "Midnight to Dawn / Akhilesh Singh" (2026-11-10) |

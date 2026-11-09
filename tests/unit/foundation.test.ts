@@ -240,3 +240,65 @@ describe("CI workflow", () => {
     expect(read(".nvmrc").trim()).toBe("22");
   });
 });
+
+describe("CI workflow scope and hygiene (F.1/W.05)", () => {
+  const ci = read(".github/workflows/ci.yml");
+  const runLines = [...ci.matchAll(/^\s*- run:\s*(.+?)\s*$/gm)].map((m) => m[1] ?? "");
+
+  it("triggers on push to every branch and on pull requests into main", () => {
+    expect(ci).toMatch(/^on:\n {2}push:\n {4}branches: \["\*\*"\]\n {2}pull_request:\n {4}branches: \[main\]/m);
+  });
+
+  it("keeps the job id and name `checks` so a future ruleset can match it", () => {
+    expect(ci).toMatch(/^jobs:\n {2}checks:\n {4}name: checks$/m);
+  });
+
+  it("checks out without LFS and without persisted credentials", () => {
+    expect(ci).toMatch(/^\s*lfs: false\b/m);
+    expect(ci).toMatch(/^\s*persist-credentials: false\b/m);
+  });
+
+  it("uses no secrets and no env blocks", () => {
+    expect(ci).not.toMatch(/secrets\./);
+    expect(ci).not.toMatch(/^\s*env:/m);
+  });
+
+  it("sets a job timeout and cancels superseded runs", () => {
+    expect(ci).toMatch(/^\s*timeout-minutes:\s*\d+\s*$/m);
+    expect(ci).toMatch(/^concurrency:\n\s+group: .*github\.ref.*\n\s+cancel-in-progress: true/m);
+  });
+
+  it("runs only install, typecheck, lint, test, in that order (no build, e2e or Lighthouse yet)", () => {
+    expect(runLines).toEqual([
+      "pnpm install --frozen-lockfile",
+      "pnpm typecheck",
+      "pnpm lint",
+      "pnpm test",
+    ]);
+    expect(ci).not.toMatch(/pnpm build|test:e2e|lhci|playwright/);
+  });
+
+  it("keeps .env.example tracked: no .gitignore pattern matches it", () => {
+    const patterns = read(".gitignore")
+      .split("\n")
+      .map((l) => l.trim())
+      .filter((l) => l !== "" && !l.startsWith("#"));
+    expect(patterns).not.toContain(".env.example");
+    expect(patterns).not.toContain(".env*");
+    expect(patterns).not.toContain(".env.*");
+    expect(patterns).toContain(".env*.local");
+  });
+});
+
+describe("merge block and docs (F.1/W.05)", () => {
+  it("/ship-shot still refuses to merge on a failing check", () => {
+    const ship = read(".claude/commands/ship-shot.md");
+    expect(ship).toMatch(/Any failing check: stop and show it\. Don't merge\./);
+  });
+
+  it("progress log records the soft-block decision and the Vercel production URL", () => {
+    const progress = read("docs/progress.md");
+    expect(progress).toMatch(/Merges are blocked only by `\/ship-shot`/);
+    expect(progress).toContain("https://portfolio-chi-ten-ogbpwcpzyp.vercel.app/");
+  });
+});
