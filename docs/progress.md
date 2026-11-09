@@ -1,6 +1,6 @@
 # Progress log
 
-Stage F: 4/29 · updated by `/ship-shot` at the end of every item.
+Stage F: 5/29 · updated by `/ship-shot` at the end of every item.
 
 ## Done
 
@@ -8,10 +8,11 @@ Stage F: 4/29 · updated by `/ship-shot` at the end of every item.
 - F.1/W.02: Next.js + TypeScript strict + Tailwind, stack installed and pinned (2026-11-09, PR #2)
 - F.1/W.03: Project docs in Markdown + progress log (2026-11-09, PR #3)
 - F.1/W.04: Blender MCP connected to Claude Code (2026-11-10, PR #4)
+- F.1/W.05: CI and Vercel preview deploys (2026-11-10, PR #6; merge block is soft via `/ship-shot` until Z.6)
 
 ## Next
 
-- F.1/W.05: CI and Vercel preview deploys
+- F.2/B.01: `settings.py` parity settings
 
 ## Open issues
 
@@ -23,12 +24,6 @@ Stage F: 4/29 · updated by `/ship-shot` at the end of every item.
 - Test-cube approval row in `blender/renders/APPROVALS.md`: confirm a non-story row belongs there (F.2/B.07).
 - Preview mp4: `render_stills.py` also renders the preview `.mp4` that `/approve-shot` expects (F.2/B.06); confirm Blender's FFmpeg output is fine.
 - KTX-Software must be installed locally and in CI for `pnpm assets` (system tool, not npm).
-
-### For F.1/W.05 (CI and Vercel)
-
-- Turn on Git LFS in the Vercel project settings, or deploys will serve LFS pointer files instead of models and images (from F.1/W.01).
-- Add `.env.example` with `RESEND_API_KEY` and `CONTACT_TO_EMAIL` (names only).
-- CI runs `pnpm install --frozen-lockfile` (proves the lockfile matches `package.json`).
 
 ### From the F.1/W.02 review (optional suggestions, not applied)
 
@@ -51,8 +46,18 @@ Stage F: 4/29 · updated by `/ship-shot` at the end of every item.
 - Screenplay 4.A titles The Endless Inbox "Upper Rank Three"; the plan's Rank list puts it at Rank Six.
 - Screenplay "How each shot becomes code" mentions Theatre.js and MeshLine, which aren't in the approved library list (the TDD wins).
 
+### From F.1/W.05 (CI and Vercel)
+
+- Merges are blocked only by `/ship-shot` (it refuses on any failing check): the repo is private on GitHub's free plan, so required-check rulesets aren't available. Add a ruleset requiring `checks` on `main` when the repo goes public at Z.6.
+- Git LFS bandwidth: GitHub free tier is 1 GB storage and 1 GB/month; every Vercel build pulls LFS files (CI skips them). Watch usage from F.2 on.
+- Prove a served LFS asset is the real file, not a pointer, once the first GLB lands in `public/models/` (F.2/B.07).
+- PR branches run CI twice (once for `push`, once for `pull_request`); fine for now, revisit if Actions minutes get tight.
+- GitHub notice: `ubuntu-latest` moves to Ubuntu 26 from 2026-10-19; nothing to do unless a run breaks.
+
 ### Environment
 
+- CI: GitHub Actions workflow `CI`, job `checks` (frozen install, typecheck, lint, unit tests) on every push and every PR into `main`; actions pinned by SHA; Node from `.nvmrc` (22).
+- Vercel project `portfolio`: production `main` → https://portfolio-chi-ten-ogbpwcpzyp.vercel.app/ ; every other branch gets a preview URL (behind Vercel Deployment Protection: log in to Vercel to view, also on a phone); Git LFS on; Node.js 22.x; no env vars yet (Act 7 adds `RESEND_API_KEY`, `CONTACT_TO_EMAIL`).
 - Blender 5.2.2 LTS (`/usr/bin/blender`); Blender MCP add-on 1.8 (protocol 15, up to date); Claude Code MCP server `uvx blender-mcp`, user-scope in `~/.claude.json` (recreate with `claude mcp add blender -- uvx blender-mcp`; update the add-on with `uvx mcp-for-blender install-addon`).
 - MCP check 2026-11-10: create / look / remove OK in an unsaved General file, scene unchanged afterwards (F.1/W.04).
 - Blender MCP telemetry disabled (2026-11-10); asset libraries (Poly Haven, Sketchfab, Poly Pizza) and 3D generators are all off.
