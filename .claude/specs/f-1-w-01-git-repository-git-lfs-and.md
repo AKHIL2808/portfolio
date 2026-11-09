@@ -1,7 +1,7 @@
 # Spec: F.1/W.01: Git repository, Git LFS and folder skeleton (Web)
 
 - Build-order item: `F.1/W.01` in `.claude/build-order/stage-F.md` (stage F)
-- Branch: `shot/f-1-w-01-git-repository-git-lfs-and` (not created yet: the folder isn't a git repository. Create it right after the first commit on `main`; see Open questions)
+- Branch: `shot/f-1-w-01-git-repository-git-lfs-and`
 - Mode: n/a (infrastructure, no shot)
 - Approved render: n/a (F.1 has no `/B` item)
 - Created: 2026-11-09
@@ -16,7 +16,7 @@ This item turns the folder (currently just `CLAUDE.md`, `docs/` and `.claude/`) 
 
 ## Depends on
 - None (first item of the first stage).
-- Tools on the machine: `git` 2.56.0 ✅ · **`git-lfs` ⚠ not installed** (`git lfs` isn't found; it must be installed, e.g. `sudo dnf install git-lfs`, then `git lfs install`).
+- Tools on the machine: `git` 2.56.0 ✅ · `git-lfs` 3.7.1 ✅ (installed 2026-11-09; `git lfs install --local` still to run in the repo).
 - `init.defaultBranch` is not set, so `git init` would create `master`. Use `git init -b main` (CI, Vercel and `/create-spec` all expect `main`).
 
 ## Shot data
@@ -63,7 +63,7 @@ None. One indirect effect: putting binary files in LFS keeps the repository fast
 **Not touched:** `CLAUDE.md`, `docs/*.pdf` (committed as normal git objects, see Open question 3), `.claude/**`.
 
 ## New dependencies
-No new npm dependencies. One new **system tool**: `git-lfs` (needed by the TDD and CLAUDE.md, not an npm package). ⚠ It must be installed by you (needs `sudo`); suggest `! sudo dnf install git-lfs`.
+No new npm dependencies. One new **system tool**: `git-lfs` 3.7.1 (needed by the TDD and CLAUDE.md, not an npm package), already installed.
 
 ## Rules for implementation
 - Create only folders the TDD Project structure / CLAUDE.md › Architecture names (plus the `raw-assets` and `renders` subfolders the stage F file names). No code, no `package.json`.
@@ -96,9 +96,9 @@ No test framework exists yet (Vitest arrives in F.1/W.02). Verify with shell com
 - Any Blender script or `.blend` file (F.2).
 
 ## Open questions
-1. **Git LFS isn't installed.** Proposed: you run `! sudo dnf install git-lfs` before the build session; nothing in this item can be done without it.
-2. **Branch for the first commit.** The shot loop puts every item on its own `shot/...` branch and squash-merges it. A brand-new repo has no `main` to branch from. Proposed: make one bootstrap commit on `main` (docs, CLAUDE.md, `.claude/`), then create `shot/f-1-w-01-git-repository-git-lfs-and` and put `.gitattributes`, `.gitignore`, the folders and LICENSES.md on it. Since there's no remote yet, `/ship-shot` merges locally. But the bootstrap commit would come before LFS is set up; it contains no LFS-pattern files (PDFs aren't on the list), so that's safe.
+1. ~~Git LFS isn't installed.~~ Resolved: git-lfs 3.7.1 installed 2026-11-09.
+2. ~~Branch for the first commit.~~ Resolved 2026-11-09: the director committed everything to `main` (with `origin` remote); work branch `shot/f-1-w-01-git-repository-git-lfs-and` created from it.
 3. **PDFs in LFS?** The three `docs/*.pdf` files total ~3.7 MB, and the rules don't list `.pdf`. Proposed: keep them as normal git objects, because they're small and won't change often.
-4. **GLB, MP4 and WebM in LFS?** CLAUDE.md lists `.blend`, `.png`, `.exr` and "raw textures/audio". Exported GLBs, preview mp4s and project videos are also large binaries. Proposed: track `*.glb`, `*.mp4`, `*.webm` and `*.wav` in LFS too. One catch: Vercel must be able to fetch LFS files at build time for `public/` (Vercel supports this with "Git LFS" turned on in project settings; to be checked in F.1/W.05).
+4. ~~GLB, MP4 and WebM in LFS?~~ Resolved 2026-11-09: yes, `*.glb`, `*.mp4`, `*.webm`, `*.wav` (and other raw image formats) are tracked. ⚠ Turn on Git LFS in Vercel's project settings in F.1/W.05.
 5. **`docs/progress.md`** doesn't exist until F.1/W.03. Proposed: W.03 writes the first progress entries for W.01–W.03 together.
-6. **Review for an item with no code.** Proposed: skip `/test-shot` and `/review-shot` for this item; the shell checks under Tests are the verification.
+6. ~~Review for an item with no code.~~ Resolved 2026-11-09: director agreed to skip `/test-shot` and `/review-shot`; the shell checks under Tests are the verification.

@@ -1,7 +1,7 @@
 # Build order: Stage F: Foundation and parity setup (F.1–F.4)
 
-- Status: NOT STARTED
-- Progress: 0/29
+- Status: IN PROGRESS
+- Progress: 1/29
 - Generated: 2026-11-09
 - Milestone: M0 Setup + M2 Core systems (tdd › Milestones); F.3 materials touch M3 (see Open questions)
 - Prerequisite: none (F is the first stage): OK
@@ -16,7 +16,7 @@
 
 ## 1. F.1 · Project setup
 
-- [ ] **F.1/W.01: Git repository, Git LFS and folder skeleton** · `Infra`
+- [x] **F.1/W.01: Git repository, Git LFS and folder skeleton** · `Infra`
   - Build: `git init` (the folder is not a repo yet), `.gitattributes` with LFS for `.blend`, `.png`, `.exr` and raw textures/audio; `.gitignore` (node_modules, `.next`, `.env.local`, Blender `*.blend1`); empty folders from the TDD Project structure, each with `.gitkeep`: `blender/{library,characters,scenes,scripts,renders}`, `raw-assets/`, `content/`, `shots/`, `public/{models,textures,vat,audio,icons}`, `tests/{unit,e2e}`; `raw-assets/LICENSES.md` with its table header
   - Files: .gitattributes, .gitignore, blender/, raw-assets/LICENSES.md, content/, shots/, public/, tests/
   - Depends on: none

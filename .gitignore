@@ -1,0 +1,26 @@
+# Dependencies and builds
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# Tests and coverage
+coverage/
+playwright-report/
+test-results/
+
+# Deploy
+.vercel/
+
+# Secrets (keep .env.example tracked)
+.env.local
+.env*.local
+
+# Blender backups and Python caches
+*.blend1
+*.blend2
+__pycache__/
+
+# OS
+.DS_Store
