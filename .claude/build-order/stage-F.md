@@ -1,7 +1,7 @@
 # Build order: Stage F: Foundation and parity setup (F.1–F.4)
 
 - Status: IN PROGRESS
-- Progress: 4/29
+- Progress: 5/29
 - Generated: 2026-11-09
 - Milestone: M0 Setup + M2 Core systems (tdd › Milestones); F.3 materials touch M3 (see Open questions)
 - Prerequisite: none (F is the first stage): OK
@@ -44,7 +44,7 @@
   - Source: plan › Foundation › F.1 (Blender MCP); tdd › Milestones › M0
   - Done when: the MCP creates an object in an open Blender file, it is visible via `look`, and it is removed again; Blender version logged
 
-- [ ] **F.1/W.05: CI and Vercel preview deploys** · `Infra`
+- [x] **F.1/W.05: CI and Vercel preview deploys** · `Infra`
   - Build: GitHub Actions workflow running typecheck, lint and unit tests on every push (e2e and Lighthouse jobs added when F.4 / Stage Z provide them); GitHub repo connected to Vercel, `main` = production, other branches = previews; branch protection so a failing check blocks merging into `main`; `.env.example` (`RESEND_API_KEY`, `CONTACT_TO_EMAIL`, empty values)
   - Files: .github/workflows/ci.yml, .env.example
   - Depends on: F.1/W.02
