@@ -196,3 +196,47 @@ describe("ESLint project config", () => {
     expect(msgs.some((m) => m.ruleId === "react-hooks/rules-of-hooks" && m.severity === 2)).toBe(true);
   }, 60_000);
 });
+
+// F.1/W.05: secret names stay in sync with CLAUDE.md, and CI runs the agreed checks safely.
+describe(".env.example", () => {
+  it("lists exactly RESEND_API_KEY and CONTACT_TO_EMAIL, with no values", () => {
+    expect(existsSync(`${root}.env.example`)).toBe(true);
+    const lines = read(".env.example")
+      .split("\n")
+      .map((l) => l.trim())
+      .filter((l) => l !== "" && !l.startsWith("#"));
+    expect(lines).toEqual(["RESEND_API_KEY=", "CONTACT_TO_EMAIL="]);
+  });
+
+  it("keeps .env.local git-ignored", () => {
+    expect(read(".gitignore").split("\n")).toContain(".env.local");
+  });
+});
+
+describe("CI workflow", () => {
+  const ci = read(".github/workflows/ci.yml");
+
+  it.each(["pnpm install --frozen-lockfile", "pnpm typecheck", "pnpm lint", "pnpm test"])(
+    "runs %s",
+    (cmd) => {
+      expect(ci).toMatch(new RegExp(`^\\s*- run: ${cmd.replace(/[-]/g, "\\-")}\\s*$`, "m"));
+    },
+  );
+
+  it("grants the workflow read-only repository access", () => {
+    expect(ci).toMatch(/^permissions:\n {2}contents: read\s*$/m);
+  });
+
+  it("pins every action to a full commit SHA", () => {
+    const uses = [...ci.matchAll(/uses:\s*(\S+)/g)].map((m) => m[1] ?? "");
+    expect(uses.length).toBeGreaterThan(0);
+    for (const ref of uses) {
+      expect(ref, `${ref} is not pinned to a 40-hex SHA`).toMatch(/@[0-9a-f]{40}$/);
+    }
+  });
+
+  it("takes Node from .nvmrc, which pins Node 22", () => {
+    expect(ci).toContain("node-version-file: .nvmrc");
+    expect(read(".nvmrc").trim()).toBe("22");
+  });
+});
