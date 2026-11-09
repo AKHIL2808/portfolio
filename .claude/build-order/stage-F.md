@@ -1,7 +1,7 @@
 # Build order: Stage F: Foundation and parity setup (F.1–F.4)
 
 - Status: IN PROGRESS
-- Progress: 1/29
+- Progress: 2/29
 - Generated: 2026-11-09
 - Milestone: M0 Setup + M2 Core systems (tdd › Milestones); F.3 materials touch M3 (see Open questions)
 - Prerequisite: none (F is the first stage): OK
@@ -23,7 +23,7 @@
   - Source: plan › Foundation › F.1 (folders, Git LFS); tdd › Project structure; CLAUDE.md › Architecture, Critical rules (Git LFS, licenses)
   - Done when: `git lfs track` lists `.blend`, `.png`, `.exr`; every folder in the TDD Project structure exists; `git status` is clean after the first commit
 
-- [ ] **F.1/W.02: Next.js + TypeScript strict + Tailwind, stack installed and pinned** · `Infra`
+- [x] **F.1/W.02: Next.js + TypeScript strict + Tailwind, stack installed and pinned** · `Infra`
   - Build: Next.js App Router with TypeScript `strict`, Tailwind CSS, ESLint (React hooks rules, no unused code); install the latest stable of every library in the CLAUDE.md › Preferred libraries table (three, @react-three/fiber, drei, postprocessing, gsap, lenis, zustand, zod, howler, detect-gpu, resend; dev: leva, r3f-perf, vitest, @playwright/test, @lhci/cli, @gltf-transform/cli, svgo) with **exact** versions; `pnpm dev | build | typecheck | lint | test | test:e2e` scripts; `src/app/layout.tsx` and a placeholder `src/app/page.tsx`; one trivial Vitest test so `pnpm test` runs
   - Files: package.json, pnpm-lock.yaml, tsconfig.json, eslint.config.mjs, tailwind/postcss config, next.config.ts, vitest.config.ts, src/app/layout.tsx, src/app/page.tsx, tests/unit/smoke.test.ts
   - Depends on: F.1/W.01
