@@ -1,7 +1,7 @@
 # Build order: Stage F: Foundation and parity setup (F.1–F.4)
 
 - Status: IN PROGRESS
-- Progress: 2/29
+- Progress: 3/29
 - Generated: 2026-11-09
 - Milestone: M0 Setup + M2 Core systems (tdd › Milestones); F.3 materials touch M3 (see Open questions)
 - Prerequisite: none (F is the first stage): OK
@@ -30,7 +30,7 @@
   - Source: plan › Foundation › F.1; tdd › Tech stack; CLAUDE.md › Code style, Preferred libraries, Commands
   - Done when: no `^`/`~` ranges in package.json; `pnpm typecheck`, `pnpm lint`, `pnpm test` and `pnpm build` all pass
 
-- [ ] **F.1/W.03: Project docs in Markdown + progress log** · `Content`
+- [x] **F.1/W.03: Project docs in Markdown + progress log** · `Content`
   - Build: convert the three PDFs to `docs/plan.md`, `docs/tdd.md`, `docs/screenplay.md` (headings, tables and code blocks kept readable); create `docs/progress.md` (Done / Next / Open issues); keep the PDFs as originals
   - Files: docs/plan.md, docs/tdd.md, docs/screenplay.md, docs/progress.md
   - Depends on: F.1/W.01
