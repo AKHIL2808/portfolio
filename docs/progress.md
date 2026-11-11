@@ -1,6 +1,6 @@
 # Progress log
 
-Stage F: 10/29 · updated by `/ship-shot` at the end of every item.
+Stage F: 11/29 · updated by `/ship-shot` at the end of every item.
 
 ## Done
 
@@ -14,10 +14,11 @@ Stage F: 10/29 · updated by `/ship-shot` at the end of every item.
 - F.2/B.03: `export_glb.py` (2026-11-11): exports named collections to `raw-assets/models/<name>.glb` (+Y up, modifiers applied, extras, clips sampled per frame from 0 s, morphs, Standard-mode lights); never exports cameras or `vfx_proxy` objects; refuses parity drift, exporter warnings and failed GLB checks (exit 1); `raw-assets/models/test-cube.glb`
 - F.2/B.04: `export_shots.py` (2026-11-11): splits the scene camera at markers into shots (`mtd_markers`), samples each Blender key into Y-up `CameraKey`s with vertical fov, roll, focus and ease; merges hand-added events and gates by shot id; `{"kind": "marker"}` entries become named points; `shots/test.json`
 - F.2/B.05: `bake_vat.py` (2026-11-11): bakes named clips of one mesh into half-float RGBA ZIP EXRs (positions, normals; object space, Y-up, column = Blender vertex index, rows top-down) + JSON layout (`frameCount`, `fps`, bounds, clips with `loop`, `indexAttribute`); `raw-assets/vat/test-vat-blob.*`
+- F.2/B.06: `render_stills.py` (stills + preview) (2026-11-11): renders 1–3 stills of a shot at shot-relative `t` (subframes honoured; 1920 × 1080 PNG, VFX proxies and their children hidden, DOF off, byte-identical re-renders) + `index.json`, and an H.264 preview (960 × 540, proxies as authored, transitions ±2 s); transitions accept `T0→1` or `T01` → folder `t0-1`
 
 ## Next
 
-- F.2/B.06: `render_stills.py` (stills + preview)
+- F.2/B.07: pnpm commands + `optimize-assets.mjs`; test-cube stills approved
 
 ## Open issues
 
@@ -25,7 +26,6 @@ Stage F: 10/29 · updated by `/ship-shot` at the end of every item.
 
 - Parity image comparison: similarity ≥ 0.90 needs an image-diff library (e.g. pixelmatch + pngjs, or SSIM); none is approved yet. Needed by F.4/W.03.
 - Test-cube approval row in `blender/renders/APPROVALS.md`: confirm a non-story row belongs there (F.2/B.07).
-- Preview mp4: `render_stills.py` also renders the preview `.mp4` that `/approve-shot` expects (F.2/B.06); confirm Blender's FFmpeg output is fine.
 - KTX-Software must be installed locally and in CI for `pnpm assets` (system tool, not npm).
 
 ### From the F.1/W.02 review (optional suggestions, not applied)
@@ -84,6 +84,12 @@ Stage F: 10/29 · updated by `/ship-shot` at the end of every item.
 - Web `VATCrowd` (Stage 3 / Act 7): load with three's `EXRLoader`, `NoColorSpace`, `NearestFilter`, no mipmaps, no `flipY`, half-float type; texel `u = (col + 0.5) / width`, `v = 1 − (row + 0.5) / height` (`rowOrder: top-down`); a unit test should check one known row. Each clip carries `loop`; one-shots include their last pose.
 - Stage 3 crowd GLB: `export_glb.py` must write the `_vat_index` vertex attribute (Blender vertex index; glTF splits and reorders vertices) and fail if it's missing on a VAT mesh.
 - Stage 3 / C: test the armature-driven bake (OBJECT slot on the armature) with the first weak demon; crowd meshes smooth-shaded, origin at the feet, no topology-changing modifiers (Solidify outlines, Subdivision); an ~800-vertex demon uses 2 rows per frame, so ≈ 256 frames total per 512-row texture (split the clip set if more).
+
+### From the F.2/B.06 review (hand-offs)
+
+- F.2/B.07: `render_stills.py` needs the still positions: `pnpm blender:stills <shot> <t…>` (e.g. `test-1 0 0.5`), and `/approve-shot`'s fallback command must pass the `t` values from the shot spec's *Stills and preview* section (update `.claude/commands/approve-shot.md`). The test-cube stills land in `blender/renders/stills/test-1/` (the B.07 *Files* line still says `stills/test/`).
+- F.4/W.03: the parity helper reads `stills/<unit-slug>/index.json` (`shot` = marker id for `/dev/shot?shot=`, each still's `file`, `t`, `frame`); stills are 1920 × 1080; previews are 960 × 540 and aren't parity references.
+- A full render (2 stills + 90-frame preview) takes about 1.5 min on this machine; a killed run can leave a `.<slug>.tmp-*` folder under `blender/renders/stills/` (safe to delete).
 
 ### Environment
 

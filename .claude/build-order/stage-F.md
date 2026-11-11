@@ -1,7 +1,7 @@
 # Build order: Stage F: Foundation and parity setup (F.1–F.4)
 
 - Status: IN PROGRESS
-- Progress: 10/29
+- Progress: 11/29
 - Generated: 2026-11-09
 - Milestone: M0 Setup + M2 Core systems (tdd › Milestones); F.3 materials touch M3 (see Open questions)
 - Prerequisite: none (F is the first stage): OK
@@ -89,7 +89,7 @@
   - Source: plan › Foundation › F.2 (bake_vat.py); tdd › Export settings and formats (Crowd animations); .claude/rules/blender.md › Budgets (VAT)
   - Done when: the test scene's animated mesh bakes headless; texture size and color space match the rules; metadata frame count equals the action length at 30 fps
 
-- [ ] **F.2/B.06: `render_stills.py` (stills + preview)** · `Export`
+- [x] **F.2/B.06: `render_stills.py` (stills + preview)** · `Export`
   - Build: renders 1–3 key frames of a shot by marker id (Eevee, 1920 × 1080, VFX proxies hidden) to `blender/renders/stills/<unit-slug>/`, and the shot's preview (VFX proxies visible, transitions ±2 s) to `blender/renders/previews/<unit-slug>.mp4`, as `/approve-shot` expects
   - Files: blender/scripts/render_stills.py
   - Depends on: F.2/B.02
@@ -244,5 +244,5 @@
 - **Parity image comparison library:** a similarity score ≥ 0.90 against a Blender still needs an image-diff library (e.g. pixelmatch + pngjs, or an SSIM package); none is on the allowed list. Playwright's `toHaveScreenshot` only compares against its own baselines. Approve a library, or write the comparison in-house?
 - ✅ **Test scene naming** (resolved 2026-11-11 in F.2/B.02: confirmed as proposed; shots `test-1` scrub / `test-2` beat): the plan has no name for the test scene; this file proposes `blender/scripts/build_test.py`, `blender/scenes/test-cube.blend`, collection `test_cube`, `shots/test.json` and a dev-only test act outside `act0…act7`. Confirm.
 - **Approval of the test-cube stills:** F.2/B.07 records them in `blender/renders/APPROVALS.md` so F.4/W.03 has an approved reference. Confirm that a non-story row belongs in that file.
-- **Preview mp4 encoding:** `/approve-shot` expects `render_stills.py` (or a sibling) to write `previews/<unit-slug>.mp4`; plan › F.2 only names stills. Folded into F.2/B.06; confirm, and confirm ffmpeg/Blender's FFmpeg output is acceptable.
+- ✅ **Preview mp4 encoding** (resolved 2026-11-11 in F.2/B.06: `render_stills.py` writes `previews/<unit-slug>.mp4`, H.264 yuv420p 960 × 540 via Blender's FFmpeg output, checked with ffprobe): `/approve-shot` expects `render_stills.py` (or a sibling) to write `previews/<unit-slug>.mp4`; plan › F.2 only names stills. Folded into F.2/B.06; confirm, and confirm ffmpeg/Blender's FFmpeg output is acceptable.
 - **KTX-Software** must be installed on the machine and in CI for `pnpm assets`; it is a system tool, not an npm package.
