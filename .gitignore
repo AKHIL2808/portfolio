@@ -22,5 +22,9 @@ test-results/
 *.blend2
 __pycache__/
 
+# Temp files of an interrupted `pnpm assets` run (scripts/optimize-assets.mjs sweeps them)
+public/**/.optimize-*
+public/**/*.tmp
+
 # OS
 .DS_Store

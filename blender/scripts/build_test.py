@@ -9,6 +9,8 @@ item runs against:
   distance), framing two test shots split by markers.
 - ``test_vat``: a small icosphere with a shape-key pulse clip, for the VAT bake.
 - ``test_vfx``: a ring tagged ``vfx_proxy = True``, hidden in parity stills.
+- scene property ``mtd_export``: what ``pnpm blender:export test`` exports
+  (the ``test_cube`` GLB and the blob's VAT; shots are always exported).
 
 Marker properties: Blender timeline markers can't hold custom properties, so
 each marker's ``mode`` / ``scrollLength`` / ``duration`` / ``camera`` live in
@@ -32,6 +34,7 @@ Live (Blender MCP), in an open session::
 ``build()`` only ever removes what this script owns, so it can be re-run.
 """
 
+import copy
 import math
 import sys
 import traceback
@@ -68,6 +71,7 @@ ACTIONS = (ACT_SPIN, ACT_PULSE, ACT_CAMERA)
 MATERIAL = "test_flat"
 WORLD = "test_world"
 MARKER_PROP = "mtd_markers"
+EXPORT_PROP = "mtd_export"
 
 # --- Timing (30 fps from settings.py) -----------------------------------------
 
@@ -81,6 +85,13 @@ MARKERS = (
     ("test-1", 1, {"mode": "scrub", "scrollLength": 2, "camera": "main"}),
     ("test-2", 90, {"mode": "beat", "duration": 2, "camera": "main"}),
 )
+
+# What leaves this scene (export_act.py): GLB collections and VAT clips.
+# Shots are always exported for the act.
+MTD_EXPORT = {
+    "glb": [COLL_CUBE],
+    "vat": [{"object": OBJ_BLOB, "clips": [ACT_PULSE]}],
+}
 
 # --- Look (linear RGB, as stored on the shader sockets) -----------------------
 
@@ -227,9 +238,10 @@ def clear_owned(scene):
     for marker in [m for m in scene.timeline_markers if m.name in owned_markers]:
         scene.timeline_markers.remove(marker)
         removed += 1
-    if MARKER_PROP in scene:
-        del scene[MARKER_PROP]
-        removed += 1
+    for prop in (MARKER_PROP, EXPORT_PROP):
+        if prop in scene:
+            del scene[prop]
+            removed += 1
     return removed
 
 
@@ -359,6 +371,11 @@ def build_camera(scene):
     return cam
 
 
+def build_export_list(scene):
+    """What ``pnpm blender:export test`` exports (read by export_act.py)."""
+    scene[EXPORT_PROP] = copy.deepcopy(MTD_EXPORT)
+
+
 def build_markers(scene):
     for name, frame, _props in MARKERS:
         scene.timeline_markers.new(name, frame=frame)
@@ -390,6 +407,7 @@ def summary():
         "tris": tris,
         "markers": [(m.name, m.frame) for m in sorted(scene.timeline_markers, key=lambda m: m.frame)],
         "frames": (scene.frame_start, scene.frame_end, scene.render.fps),
+        "export": scene[EXPORT_PROP].to_dict(),
     }
 
 
@@ -408,6 +426,7 @@ def build(save_path=None):
     build_vfx_proxy(scene)
     build_camera(scene)
     build_markers(scene)
+    build_export_list(scene)
     scene.frame_set(FRAME_START)
     if save_path:
         save(save_path)

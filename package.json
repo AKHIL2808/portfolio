@@ -13,7 +13,10 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
-    "test:e2e": "playwright test --pass-with-no-tests"
+    "test:e2e": "playwright test --pass-with-no-tests",
+    "blender:export": "node scripts/blender.mjs export",
+    "blender:stills": "node scripts/blender.mjs stills",
+    "assets": "node scripts/optimize-assets.mjs"
   },
   "dependencies": {
     "@react-three/drei": "10.7.9",

@@ -1,6 +1,6 @@
 # Progress log
 
-Stage F: 11/29 · updated by `/ship-shot` at the end of every item.
+Stage F: 12/29 · updated by `/ship-shot` at the end of every item.
 
 ## Done
 
@@ -15,18 +15,19 @@ Stage F: 11/29 · updated by `/ship-shot` at the end of every item.
 - F.2/B.04: `export_shots.py` (2026-11-11): splits the scene camera at markers into shots (`mtd_markers`), samples each Blender key into Y-up `CameraKey`s with vertical fov, roll, focus and ease; merges hand-added events and gates by shot id; `{"kind": "marker"}` entries become named points; `shots/test.json`
 - F.2/B.05: `bake_vat.py` (2026-11-11): bakes named clips of one mesh into half-float RGBA ZIP EXRs (positions, normals; object space, Y-up, column = Blender vertex index, rows top-down) + JSON layout (`frameCount`, `fps`, bounds, clips with `loop`, `indexAttribute`); `raw-assets/vat/test-vat-blob.*`
 - F.2/B.06: `render_stills.py` (stills + preview) (2026-11-11): renders 1–3 stills of a shot at shot-relative `t` (subframes honoured; 1920 × 1080 PNG, VFX proxies and their children hidden, DOF off, byte-identical re-renders) + `index.json`, and an H.264 preview (960 × 540, proxies as authored, transitions ±2 s); transitions accept `T0→1` or `T01` → folder `t0-1`
+- test-1/B approved and exported (2026-11-12): test-cube stills `blender/renders/stills/test-1/t0.000.png`, `t0.500.png` + preview `previews/test-1.mp4`; first row in `blender/renders/APPROVALS.md` (the first parity reference, F.4/W.03)
+- F.2/B.07: pnpm commands + `optimize-assets.mjs`; test-cube stills approved (2026-11-12): `pnpm blender:export <act>` (scene property `mtd_export` → `export_act.py`, all checks before any write), `pnpm blender:stills <shot> <t…>` (finds the shot's scene), `pnpm assets` (dedup → prune → KTX2 when textured → meshopt, verified against the raw GLB, VAT copied; all-or-nothing); Blender via `BLENDER_BIN` (official 5.2.x, `--disable-autoexec`); proven from a clean checkout. **F.2 complete.**
 
 ## Next
 
-- F.2/B.07: pnpm commands + `optimize-assets.mjs`; test-cube stills approved
+- F.3/W.01: Store and shot data types
 
 ## Open issues
 
 ### Stage F open questions (`.claude/build-order/stage-F.md`)
 
 - Parity image comparison: similarity ≥ 0.90 needs an image-diff library (e.g. pixelmatch + pngjs, or SSIM); none is approved yet. Needed by F.4/W.03.
-- Test-cube approval row in `blender/renders/APPROVALS.md`: confirm a non-story row belongs there (F.2/B.07).
-- KTX-Software must be installed locally and in CI for `pnpm assets` (system tool, not npm).
+- KTX-Software (`ktx` ≥ 4.4) isn't installed: needed only once a GLB has textures (first in Stage C); `pnpm assets` stops with an install message until then. Installing it is a system change: ask the director first. CI doesn't run `pnpm assets`.
 
 ### From the F.1/W.02 review (optional suggestions, not applied)
 
@@ -53,7 +54,7 @@ Stage F: 11/29 · updated by `/ship-shot` at the end of every item.
 
 - Merges are blocked only by `/ship-shot` (it refuses on any failing check): the repo is private on GitHub's free plan, so required-check rulesets aren't available. Add a ruleset requiring `checks` on `main` when the repo goes public at Z.6.
 - Git LFS bandwidth: GitHub free tier is 1 GB storage and 1 GB/month; every Vercel build pulls LFS files (CI skips them). Watch usage from F.2 on.
-- Prove a served LFS asset is the real file, not a pointer, once the first GLB lands in `public/models/` (F.2/B.07).
+- Prove a served LFS asset is the real file, not a pointer: `public/models/test-cube.glb` landed in F.2/B.07, but preview deploys sit behind Vercel Deployment Protection, so check it in a logged-in browser (`/models/test-cube.glb` must start with `glTF`) or when F.3 first loads it.
 - PR branches run CI twice (once for `push`, once for `pull_request`); fine for now, revisit if Actions minutes get tight.
 - GitHub notice: `ubuntu-latest` moves to Ubuntu 26 from 2026-10-19; nothing to do unless a run breaks.
 
@@ -80,16 +81,22 @@ Stage F: 11/29 · updated by `/ship-shot` at the end of every item.
 
 ### From the F.2/B.05 review (hand-offs)
 
-- F.2/B.07: `pnpm assets` copies `raw-assets/vat/*.exr` and `*.json` to `public/vat/` unchanged (never KTX2: it would destroy the precision); count them in the act's asset budget.
 - Web `VATCrowd` (Stage 3 / Act 7): load with three's `EXRLoader`, `NoColorSpace`, `NearestFilter`, no mipmaps, no `flipY`, half-float type; texel `u = (col + 0.5) / width`, `v = 1 − (row + 0.5) / height` (`rowOrder: top-down`); a unit test should check one known row. Each clip carries `loop`; one-shots include their last pose.
 - Stage 3 crowd GLB: `export_glb.py` must write the `_vat_index` vertex attribute (Blender vertex index; glTF splits and reorders vertices) and fail if it's missing on a VAT mesh.
 - Stage 3 / C: test the armature-driven bake (OBJECT slot on the armature) with the first weak demon; crowd meshes smooth-shaded, origin at the feet, no topology-changing modifiers (Solidify outlines, Subdivision); an ~800-vertex demon uses 2 rows per frame, so ≈ 256 frames total per 512-row texture (split the clip set if more).
 
 ### From the F.2/B.06 review (hand-offs)
 
-- F.2/B.07: `render_stills.py` needs the still positions: `pnpm blender:stills <shot> <t…>` (e.g. `test-1 0 0.5`), and `/approve-shot`'s fallback command must pass the `t` values from the shot spec's *Stills and preview* section (update `.claude/commands/approve-shot.md`). The test-cube stills land in `blender/renders/stills/test-1/` (the B.07 *Files* line still says `stills/test/`).
 - F.4/W.03: the parity helper reads `stills/<unit-slug>/index.json` (`shot` = marker id for `/dev/shot?shot=`, each still's `file`, `t`, `frame`); stills are 1920 × 1080; previews are 960 × 540 and aren't parity references.
 - A full render (2 stills + 90-frame preview) takes about 1.5 min on this machine; a killed run can leave a `.<slug>.tmp-*` folder under `blender/renders/stills/` (safe to delete).
+
+### From the F.2/B.07 reviews (hand-offs)
+
+- F.3: GLBs are meshopt-compressed with `KHR_mesh_quantization` required: install `MeshoptDecoder` (drei `useGLTF` does; a raw `GLTFLoader` needs `.setMeshoptDecoder`). A mesh may sit under an unnamed holder node and mesh-node transforms aren't the authored values: find objects with `getObjectByName` and traverse under them. The VAT index attribute is `_VAT_INDEX` in the GLB (three lower-cases it to `_vat_index`). The first textured GLB also needs a KTX2 transcoder (`useKTX2` / `KTX2Loader`).
+- Stage C (before C1): run one real KTX2 pass (ETC1S + UASTC, check `etc1s` skips textures already in KTX2, colour vs Non-Color); re-check `verify()` on a skinned GLB with LODs.
+- Raw files of collections or VAT objects removed from a scene's `mtd_export` stay in `raw-assets/` (and `pnpm assets` keeps publishing them): delete them by hand until an ownership list exists.
+- `pnpm blender:stills` opens every scene to find a shot; once there are many heavy scenes, add a marker index or an act-prefix lookup (`--scene` skips the search today).
+- `BLENDER_BIN` must never come from a repo `.env` or CI input (it's executed).
 
 ### Environment
 

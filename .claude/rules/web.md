@@ -56,7 +56,7 @@ Quality tier changes only between shots. Asset budgets per act: 0 = 300 KB, 1 = 
 
 ## Tests per shot (from the plan's Test checklist)
 
-- **Parity:** `pnpm blender:stills <shot>` vs `/dev/shot?shot=<id>&t=<t>` screenshot, similarity ≥ 0.90, HTML and VFX hidden, fixed seed.
+- **Parity:** `pnpm blender:stills <shot> <t…>` (`blender/renders/stills/<unit-slug>/index.json`) vs `/dev/shot?shot=<id>&t=<t>` screenshot, similarity ≥ 0.90, HTML and VFX hidden, fixed seed.
 - **Stitch:** `/dev/stitch?from=<prev>&to=<shot>` shows no jump; hand-offs have no frame over 50 ms.
 - **Shot data (Vitest):** keys sorted by `t` from 0 to 1, valid cue names, gates that exist, events survive re-export.
 - **Interaction:** every gate by mouse, touch and keyboard; screen reader reads HTML on surfaces.
