@@ -1,0 +1,109 @@
+{
+  "act": "test",
+  "fps": 30,
+  "shots": [
+    {
+      "id": "test-1",
+      "mode": "scrub",
+      "scrollLength": 2,
+      "camera": "main",
+      "keys": [
+        {
+          "t": 0.0,
+          "pos": [
+            3.2,
+            2.4,
+            4.2
+          ],
+          "target": [
+            0.0,
+            0.5,
+            0.0
+          ],
+          "fov": 32.269,
+          "roll": 0.0,
+          "focus": 5.6116,
+          "ease": "power1.inOut"
+        },
+        {
+          "t": 0.4944,
+          "pos": [
+            0.8,
+            1.5,
+            5.0
+          ],
+          "target": [
+            0.0,
+            0.5,
+            0.0
+          ],
+          "fov": 22.895,
+          "roll": 0.0,
+          "focus": 5.1614,
+          "ease": "power1.inOut"
+        },
+        {
+          "t": 1.0,
+          "pos": [
+            -3.4,
+            1.8,
+            3.8
+          ],
+          "target": [
+            0.0,
+            0.5,
+            0.0
+          ],
+          "fov": 32.269,
+          "roll": 0.0,
+          "focus": 5.2621
+        }
+      ],
+      "events": []
+    },
+    {
+      "id": "test-2",
+      "mode": "beat",
+      "duration": 2,
+      "camera": "main",
+      "keys": [
+        {
+          "t": 0.0,
+          "pos": [
+            -3.4,
+            1.8,
+            3.8
+          ],
+          "target": [
+            0.0,
+            0.5,
+            0.0
+          ],
+          "fov": 32.269,
+          "roll": 0.0,
+          "focus": 5.2621,
+          "ease": "power1.inOut"
+        },
+        {
+          "t": 1.0,
+          "pos": [
+            -2.5,
+            4.5,
+            2.5
+          ],
+          "target": [
+            0.0,
+            0.5,
+            0.0
+          ],
+          "fov": 39.761,
+          "roll": 0.0,
+          "focus": 5.3385
+        }
+      ],
+      "events": []
+    }
+  ],
+  "markers": [],
+  "gates": []
+}

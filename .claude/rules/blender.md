@@ -66,6 +66,7 @@ Environments and props: kits, not one-offs; repeated pieces exported once and in
 - Collections `act<N>_<thing>`; actions `<character>_<move>`; `text_anchor`, `video_anchor`, `form_anchor`, `label_anchor` empties where HTML will sit.
 - Hinged objects have their origin at the hinge (tatami, floorboards, door panels, bamboo fountain).
 - Timeline markers can't hold custom properties (Blender 5.2), so each marker's `mode`, `scrollLength` / `duration` and `camera` live in the scene property `mtd_markers = { "<marker name>": { … } }`; `export_shots.py` reads them from there.
+- Markers that aren't shot starts (hand-offs such as `T01-handoff`, cut points such as `4R6-C1`) get the `mtd_markers` entry `{"kind": "marker"}`; they're exported as named points (`markers: [{id, shot, t}]`) and don't split shots.
 - VFX proxies carry the object custom property `vfx_proxy = True`; `render_stills.py` hides them in parity stills.
 - Loop clips key their closing pose one frame past the period (a 60-frame spin keys 360° at frame 61), so frames `[start, end)` are the loop's distinct frames.
 - `export_shots.py` samples one keyframe per Blender key (not per frame) and **merges** existing events and gates by shot id; it never drops hand-added events.
