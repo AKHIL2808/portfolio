@@ -1,6 +1,6 @@
 # Progress log
 
-Stage F: 5/29 · updated by `/ship-shot` at the end of every item.
+Stage F: 6/29 · updated by `/ship-shot` at the end of every item.
 
 ## Done
 
@@ -9,10 +9,11 @@ Stage F: 5/29 · updated by `/ship-shot` at the end of every item.
 - F.1/W.03: Project docs in Markdown + progress log (2026-11-09, PR #3)
 - F.1/W.04: Blender MCP connected to Claude Code (2026-11-10, PR #4)
 - F.1/W.05: CI and Vercel preview deploys (2026-11-10, PR #6; merge block is soft via `/ship-shot` until Z.6)
+- F.2/B.01: `settings.py` parity settings (2026-11-11): `settings.apply()` sets meters, 30 fps, 1920×1080, AgX, Eevee 64/16 samples; `set_color_space()` and `seed_all()` helpers; headless check exits 1 on any failure
 
 ## Next
 
-- F.2/B.01: `settings.py` parity settings
+- F.2/B.02: Test scene — cube, camera, markers
 
 ## Open issues
 
@@ -54,11 +55,17 @@ Stage F: 5/29 · updated by `/ship-shot` at the end of every item.
 - PR branches run CI twice (once for `push`, once for `pull_request`); fine for now, revisit if Actions minutes get tight.
 - GitHub notice: `ubuntu-latest` moves to Ubuntu 26 from 2026-10-19; nothing to do unless a run breaks.
 
+### From the F.2/B.01 review (optional suggestions, not applied)
+
+- Pin more look-affecting render settings in `settings.py` (film `filter_size`, Eevee ray tracing / fast GI, `use_hdr_view`) once the web side exists to match against.
+- `pnpm blender:*` scripts (F.2/B.07) must call the official Blender (e.g. a `BLENDER_BIN` env var), never Fedora's `/usr/bin/blender`; consider a note in `.claude/rules/blender.md` and CLAUDE.md Commands.
+- `seed_all()` seeds NumPy's legacy global generator; later scripts should prefer the returned `random.Random` stream or `numpy.random.default_rng(seed)`, and set Blender node/modifier seeds explicitly.
+
 ### Environment
 
 - CI: GitHub Actions workflow `CI`, job `checks` (frozen install, typecheck, lint, unit tests) on every push and every PR into `main`; actions pinned by SHA; Node from `.nvmrc` (22).
 - Vercel project `portfolio`: production `main` → https://portfolio-chi-ten-ogbpwcpzyp.vercel.app/ ; every other branch gets a preview URL (behind Vercel Deployment Protection: log in to Vercel to view, also on a phone); Git LFS on; Node.js 22.x; no env vars yet (Act 7 adds `RESEND_API_KEY`, `CONTACT_TO_EMAIL`).
-- Blender 5.2.2 LTS (`/usr/bin/blender`); Blender MCP add-on 1.8 (protocol 15, up to date); Claude Code MCP server `uvx blender-mcp`, user-scope in `~/.claude.json` (recreate with `claude mcp add blender -- uvx blender-mcp`; update the add-on with `uvx mcp-for-blender install-addon`).
+- Blender **5.2.4 LTS, official blender.org build** at `~/Applications/blender-5.2.4-linux-x64/blender` (menu entry "Blender 5.2.4 LTS (official)"), installed 2026-11-11 for F.2/B.01. Use it for live and headless work. The Fedora package (`/usr/bin/blender`, 5.2.2) is linked against OCIO 2.4.2, which can't load Blender's OCIO 2.5 config, so it offers only the `Standard` view transform (no AgX) and must not be used for parity work. Blender MCP add-on 1.8 (protocol 15, up to date); Claude Code MCP server `uvx blender-mcp`, user-scope in `~/.claude.json` (recreate with `claude mcp add blender -- uvx blender-mcp`; update the add-on with `uvx mcp-for-blender install-addon`).
 - MCP check 2026-11-10: create / look / remove OK in an unsaved General file, scene unchanged afterwards (F.1/W.04).
 - Blender MCP telemetry disabled (2026-11-10); asset libraries (Poly Haven, Sketchfab, Poly Pizza) and 3D generators are all off.
 - The shell prints a zoxide configuration warning on every command (harmless; set `_ZO_DOCTOR=0` or move the zoxide init to the end of `~/.zshrc`).
