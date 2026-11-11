@@ -35,7 +35,7 @@ Live building goes through the Blender MCP so the user can watch; **the final st
 | Character lights | glTF lighting mode Standard |
 | Camera | 1920 × 1080; focal length and focus distance keyed per shot |
 | Animation | 30 fps keys, constraints baked, root motion removed, one action per clip, loops end `_loop` |
-| Timing | Markers named with shot ids; custom properties on each marker set `mode`, `scrollLength` or `duration` |
+| Timing | Markers named with shot ids; each marker's `mode`, `scrollLength` or `duration` (and `camera`) is stored in the scene property `mtd_markers`, keyed by marker name (markers can't hold custom properties) |
 | Randomness | Fixed seeds in scripts; scatter seeds saved for the web (e.g. `shots/act1-shaft.json`) |
 
 **Not exportable:** particles, simulations and compositor effects. Use a VFX proxy (plane, curve, ring) for timing and framing, hidden in parity stills.
@@ -65,6 +65,9 @@ Environments and props: kits, not one-offs; repeated pieces exported once and in
 - Look shader nodes up by **type**, never by name; read enum identifiers instead of hard-coding them; material colors go on shader node inputs, not `diffuse_color`.
 - Collections `act<N>_<thing>`; actions `<character>_<move>`; `text_anchor`, `video_anchor`, `form_anchor`, `label_anchor` empties where HTML will sit.
 - Hinged objects have their origin at the hinge (tatami, floorboards, door panels, bamboo fountain).
+- Timeline markers can't hold custom properties (Blender 5.2), so each marker's `mode`, `scrollLength` / `duration` and `camera` live in the scene property `mtd_markers = { "<marker name>": { … } }`; `export_shots.py` reads them from there.
+- VFX proxies carry the object custom property `vfx_proxy = True`; `render_stills.py` hides them in parity stills.
+- Loop clips key their closing pose one frame past the period (a 60-frame spin keys 360° at frame 61), so frames `[start, end)` are the loop's distinct frames.
 - `export_shots.py` samples one keyframe per Blender key (not per frame) and **merges** existing events and gates by shot id; it never drops hand-added events.
 - Never hand-edit exported GLBs or camera keys in `public/` or `shots/`; fix in Blender and re-export.
 - Imported/third-party assets: CC0 or royalty-free only, logged in `raw-assets/LICENSES.md`. Designs are original (see `docs/plan.md` › The cast).

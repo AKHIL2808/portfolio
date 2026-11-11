@@ -1,7 +1,7 @@
 # Build order: Stage F: Foundation and parity setup (F.1–F.4)
 
 - Status: IN PROGRESS
-- Progress: 6/29
+- Progress: 7/29
 - Generated: 2026-11-09
 - Milestone: M0 Setup + M2 Core systems (tdd › Milestones); F.3 materials touch M3 (see Open questions)
 - Prerequisite: none (F is the first stage): OK
@@ -61,7 +61,7 @@
   - Source: plan › Foundation › F.2 (settings.py); plan › Blender-to-web parity rules; .claude/rules/blender.md › Parity settings, Script rules
   - Done when: `blender --background --python blender/scripts/settings.py` on a factory-startup file sets every value above (printed and asserted); running it twice changes nothing
 
-- [ ] **F.2/B.02: Test scene — cube, camera, markers** · `Blender`
+- [x] **F.2/B.02: Test scene — cube, camera, markers** · `Blender`
   - Build: `build_test.py` (calls settings.py first, idempotent): collection `test_cube` with a cube using a placeholder flat material and custom properties, one key light, one animated camera with ≥ 3 keys (focal length and focus distance keyed), markers for two test shots with custom properties (`mode: scrub` + `scrollLength`, `mode: beat` + `duration`), a small animated mesh for the VAT check; saved to `blender/scenes/test-cube.blend`
   - Files: blender/scripts/build_test.py, blender/scenes/test-cube.blend
   - Depends on: F.2/B.01
@@ -76,7 +76,7 @@
   - Done when: headless export of `test_cube` writes a GLB whose cube extras, clip and light are readable by `gltf-transform inspect`
 
 - [ ] **F.2/B.04: `export_shots.py`** · `Export`
-  - Build: samples the camera at every Blender key (not per frame) → `CameraKey { t, pos, target, fov, roll, ease }` with focus distance; markers split shots, marker custom properties set `mode`, `scrollLength`/`duration`, camera `main|pov`; writes `shots/<act>.json` in the TDD Shot format; **merges** existing `events` and gates by shot id
+  - Build: samples the camera at every Blender key (not per frame) → `CameraKey { t, pos, target, fov, roll, ease }` with focus distance; markers split shots, the scene property `mtd_markers` (keyed by marker name; markers can't hold custom properties) sets `mode`, `scrollLength`/`duration`, camera `main|pov`; writes `shots/<act>.json` in the TDD Shot format; **merges** existing `events` and gates by shot id
   - Files: blender/scripts/export_shots.py, shots/test.json
   - Depends on: F.2/B.02
   - Source: plan › Foundation › F.2 (export_shots.py); tdd › Core systems › 2 Shot data format; .claude/rules/blender.md › Script rules
@@ -240,9 +240,9 @@
 
 ## Open questions
 
-- **MTD_Toon library vs F.3 materials:** plan › F.3 says ToonMaterial and InkOutline must match "the Blender library", but plan › F.2 doesn't list building `MTD_Toon` + the outline in `blender/library/` (tdd puts it in M3). Should a minimal `MTD_Toon` node group + Solidify outline be added to F.2 (e.g. in F.2/B.02) so F.3/W.11 can be parity-checked, or is F.3/W.11 checked only against custom properties now and visually in C1?
+- ✅ **MTD_Toon library vs F.3 materials** (resolved 2026-11-11 in F.2/B.02: no node group in F.2; the test cube's material carries the toon values as custom properties for F.3/W.11; visual match in C1): plan › F.3 says ToonMaterial and InkOutline must match "the Blender library", but plan › F.2 doesn't list building `MTD_Toon` + the outline in `blender/library/` (tdd puts it in M3). Should a minimal `MTD_Toon` node group + Solidify outline be added to F.2 (e.g. in F.2/B.02) so F.3/W.11 can be parity-checked, or is F.3/W.11 checked only against custom properties now and visually in C1?
 - **Parity image comparison library:** a similarity score ≥ 0.90 against a Blender still needs an image-diff library (e.g. pixelmatch + pngjs, or an SSIM package); none is on the allowed list. Playwright's `toHaveScreenshot` only compares against its own baselines. Approve a library, or write the comparison in-house?
-- **Test scene naming:** the plan has no name for the test scene; this file proposes `blender/scripts/build_test.py`, `blender/scenes/test-cube.blend`, collection `test_cube`, `shots/test.json` and a dev-only test act outside `act0…act7`. Confirm.
+- ✅ **Test scene naming** (resolved 2026-11-11 in F.2/B.02: confirmed as proposed; shots `test-1` scrub / `test-2` beat): the plan has no name for the test scene; this file proposes `blender/scripts/build_test.py`, `blender/scenes/test-cube.blend`, collection `test_cube`, `shots/test.json` and a dev-only test act outside `act0…act7`. Confirm.
 - **Approval of the test-cube stills:** F.2/B.07 records them in `blender/renders/APPROVALS.md` so F.4/W.03 has an approved reference. Confirm that a non-story row belongs in that file.
 - **Preview mp4 encoding:** `/approve-shot` expects `render_stills.py` (or a sibling) to write `previews/<unit-slug>.mp4`; plan › F.2 only names stills. Folded into F.2/B.06; confirm, and confirm ffmpeg/Blender's FFmpeg output is acceptable.
 - **KTX-Software** must be installed on the machine and in CI for `pnpm assets`; it is a system tool, not an npm package.
