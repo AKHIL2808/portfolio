@@ -1,7 +1,7 @@
 # Build order: Stage F: Foundation and parity setup (F.1–F.4)
 
 - Status: IN PROGRESS
-- Progress: 5/29
+- Progress: 6/29
 - Generated: 2026-11-09
 - Milestone: M0 Setup + M2 Core systems (tdd › Milestones); F.3 materials touch M3 (see Open questions)
 - Prerequisite: none (F is the first stage): OK
@@ -54,7 +54,7 @@
 
 ## 2. F.2 · Blender settings and scripts
 
-- [ ] **F.2/B.01: `settings.py` parity settings** · `Blender`
+- [x] **F.2/B.01: `settings.py` parity settings** · `Blender`
   - Build: one function every scene script calls first: meters (unit scale 1), 30 fps, 1920 × 1080 at 100%, view transform AgX, look none, exposure 0, gamma 1, display sRGB; Eevee preview settings; helpers for sRGB vs Non-Color texture spaces and a fixed-seed helper; enum identifiers read from `bl_rna`, never hard-coded
   - Files: blender/scripts/settings.py
   - Depends on: F.1/W.04
