@@ -1,7 +1,7 @@
 # Build order: Stage F: Foundation and parity setup (F.1–F.4)
 
 - Status: IN PROGRESS
-- Progress: 7/29
+- Progress: 8/29
 - Generated: 2026-11-09
 - Milestone: M0 Setup + M2 Core systems (tdd › Milestones); F.3 materials touch M3 (see Open questions)
 - Prerequisite: none (F is the first stage): OK
@@ -68,7 +68,7 @@
   - Source: plan › Foundation › F.4 Done when ("a test cube scene"); tdd › Milestones › M0 ("export scripts run headless on an empty test scene"), M2 ("a test scene with a moving camera and markers")
   - Done when: `blender --background --python blender/scripts/build_test.py` rebuilds the scene from scratch; running it twice leaves no duplicates
 
-- [ ] **F.2/B.03: `export_glb.py`** · `Export`
+- [x] **F.2/B.03: `export_glb.py`** · `Export`
   - Build: exports chosen collections to `raw-assets/models/<name>.glb`: +Y up, modifiers applied, custom properties (extras), all actions as clips, shape keys, lights with glTF lighting mode Standard; collection list passed as arguments
   - Files: blender/scripts/export_glb.py, raw-assets/models/test-cube.glb
   - Depends on: F.2/B.02

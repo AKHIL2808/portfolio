@@ -1,6 +1,6 @@
 # Progress log
 
-Stage F: 7/29 · updated by `/ship-shot` at the end of every item.
+Stage F: 8/29 · updated by `/ship-shot` at the end of every item.
 
 ## Done
 
@@ -11,10 +11,11 @@ Stage F: 7/29 · updated by `/ship-shot` at the end of every item.
 - F.1/W.05: CI and Vercel preview deploys (2026-11-10, PR #6; merge block is soft via `/ship-shot` until Z.6)
 - F.2/B.01: `settings.py` parity settings (2026-11-11): `settings.apply()` sets meters, 30 fps, 1920×1080, AgX, Eevee 64/16 samples; `set_color_space()` and `seed_all()` helpers; headless check exits 1 on any failure
 - F.2/B.02: Test scene — cube, camera, markers (2026-11-11): `build_test.py` → `blender/scenes/test-cube.blend` with a spinning cube + sun (`test_cube`), 4-key camera, shots `test-1` (scrub, 2) and `test-2` (beat, 2 s), a pulsing VAT blob and a tagged VFX ring; marker properties live in scene property `mtd_markers`
+- F.2/B.03: `export_glb.py` (2026-11-11): exports named collections to `raw-assets/models/<name>.glb` (+Y up, modifiers applied, extras, clips sampled per frame from 0 s, morphs, Standard-mode lights); never exports cameras or `vfx_proxy` objects; refuses parity drift, exporter warnings and failed GLB checks (exit 1); `raw-assets/models/test-cube.glb`
 
 ## Next
 
-- F.2/B.03: `export_glb.py`
+- F.2/B.04: `export_shots.py`
 
 ## Open issues
 
@@ -62,8 +63,15 @@ Stage F: 7/29 · updated by `/ship-shot` at the end of every item.
 
 ### From the F.2/B.02 review (hand-offs)
 
-- F.2/B.03: `export_glb.py` must turn on glTF custom-property export (extras), or F.3/W.11 won't see the material's toon values; clips are frames `[start, end)` (closing key one frame past the period).
 - F.2/B.04: convert `scene["mtd_markers"]` with `.to_dict()` before `json.dumps`; each shot's first and last `CameraKey` sit on marker frames (1, 90) and the last shot ends at `scene.frame_end` (150).
+
+### From the F.2/B.03 review (hand-offs)
+
+- F.3: lights arrive in glTF photometric units (Standard mode: a 3 W/m² sun exports as intensity 2049 lux); materials export `doubleSided: true` while Blender backface culling is off; ToonMaterial reads `extras` RGB values as 3-number arrays and `bands` as a number.
+- C1 (first character): outline Solidify modifiers must not be baked into the GLB (`export_apply` applies every modifier; the browser draws InkOutline itself): switch them off during export or tag them; the exporter doesn't apply modifiers on meshes with shape keys, so bake those in the build script.
+- C1: `export_glb.py` only checks the active object / shape-key action per object; extend the clip check to NLA-track and armature actions when one rig carries many clips.
+- C1: rigs export their rest pose from `frame_start`: key a neutral pose there, or export with `pose_position = 'REST'`.
+- `export_glb.py` pins the glTF add-on to 5.2 (`TESTED_GLTF_ADDON`); after a Blender upgrade, re-run the F.2/B.03 probes (incl. the warning-capture probe) before bumping it.
 
 ### Environment
 
