@@ -1,6 +1,6 @@
 # Progress log
 
-Stage F: 6/29 · updated by `/ship-shot` at the end of every item.
+Stage F: 7/29 · updated by `/ship-shot` at the end of every item.
 
 ## Done
 
@@ -10,18 +10,17 @@ Stage F: 6/29 · updated by `/ship-shot` at the end of every item.
 - F.1/W.04: Blender MCP connected to Claude Code (2026-11-10, PR #4)
 - F.1/W.05: CI and Vercel preview deploys (2026-11-10, PR #6; merge block is soft via `/ship-shot` until Z.6)
 - F.2/B.01: `settings.py` parity settings (2026-11-11): `settings.apply()` sets meters, 30 fps, 1920×1080, AgX, Eevee 64/16 samples; `set_color_space()` and `seed_all()` helpers; headless check exits 1 on any failure
+- F.2/B.02: Test scene — cube, camera, markers (2026-11-11): `build_test.py` → `blender/scenes/test-cube.blend` with a spinning cube + sun (`test_cube`), 4-key camera, shots `test-1` (scrub, 2) and `test-2` (beat, 2 s), a pulsing VAT blob and a tagged VFX ring; marker properties live in scene property `mtd_markers`
 
 ## Next
 
-- F.2/B.02: Test scene — cube, camera, markers
+- F.2/B.03: `export_glb.py`
 
 ## Open issues
 
 ### Stage F open questions (`.claude/build-order/stage-F.md`)
 
-- MTD_Toon library vs F.3 materials: decide whether a minimal `MTD_Toon` node group + outline is added to F.2 so F.3/W.11 can be parity-checked, or the visual match waits for C1.
 - Parity image comparison: similarity ≥ 0.90 needs an image-diff library (e.g. pixelmatch + pngjs, or SSIM); none is approved yet. Needed by F.4/W.03.
-- Test-scene naming: proposed `build_test.py`, `test-cube.blend`, collection `test_cube`, `shots/test.json`, dev-only test act. Confirm at F.2/B.02.
 - Test-cube approval row in `blender/renders/APPROVALS.md`: confirm a non-story row belongs there (F.2/B.07).
 - Preview mp4: `render_stills.py` also renders the preview `.mp4` that `/approve-shot` expects (F.2/B.06); confirm Blender's FFmpeg output is fine.
 - KTX-Software must be installed locally and in CI for `pnpm assets` (system tool, not npm).
@@ -60,6 +59,11 @@ Stage F: 6/29 · updated by `/ship-shot` at the end of every item.
 - Pin more look-affecting render settings in `settings.py` (film `filter_size`, Eevee ray tracing / fast GI, `use_hdr_view`) once the web side exists to match against.
 - `pnpm blender:*` scripts (F.2/B.07) must call the official Blender (e.g. a `BLENDER_BIN` env var), never Fedora's `/usr/bin/blender`; consider a note in `.claude/rules/blender.md` and CLAUDE.md Commands.
 - `seed_all()` seeds NumPy's legacy global generator; later scripts should prefer the returned `random.Random` stream or `numpy.random.default_rng(seed)`, and set Blender node/modifier seeds explicitly.
+
+### From the F.2/B.02 review (hand-offs)
+
+- F.2/B.03: `export_glb.py` must turn on glTF custom-property export (extras), or F.3/W.11 won't see the material's toon values; clips are frames `[start, end)` (closing key one frame past the period).
+- F.2/B.04: convert `scene["mtd_markers"]` with `.to_dict()` before `json.dumps`; each shot's first and last `CameraKey` sit on marker frames (1, 90) and the last shot ends at `scene.frame_end` (150).
 
 ### Environment
 
