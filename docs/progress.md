@@ -1,6 +1,6 @@
 # Progress log
 
-Stage F: 8/29 · updated by `/ship-shot` at the end of every item.
+Stage F: 9/29 · updated by `/ship-shot` at the end of every item.
 
 ## Done
 
@@ -12,10 +12,11 @@ Stage F: 8/29 · updated by `/ship-shot` at the end of every item.
 - F.2/B.01: `settings.py` parity settings (2026-11-11): `settings.apply()` sets meters, 30 fps, 1920×1080, AgX, Eevee 64/16 samples; `set_color_space()` and `seed_all()` helpers; headless check exits 1 on any failure
 - F.2/B.02: Test scene — cube, camera, markers (2026-11-11): `build_test.py` → `blender/scenes/test-cube.blend` with a spinning cube + sun (`test_cube`), 4-key camera, shots `test-1` (scrub, 2) and `test-2` (beat, 2 s), a pulsing VAT blob and a tagged VFX ring; marker properties live in scene property `mtd_markers`
 - F.2/B.03: `export_glb.py` (2026-11-11): exports named collections to `raw-assets/models/<name>.glb` (+Y up, modifiers applied, extras, clips sampled per frame from 0 s, morphs, Standard-mode lights); never exports cameras or `vfx_proxy` objects; refuses parity drift, exporter warnings and failed GLB checks (exit 1); `raw-assets/models/test-cube.glb`
+- F.2/B.04: `export_shots.py` (2026-11-11): splits the scene camera at markers into shots (`mtd_markers`), samples each Blender key into Y-up `CameraKey`s with vertical fov, roll, focus and ease; merges hand-added events and gates by shot id; `{"kind": "marker"}` entries become named points; `shots/test.json`
 
 ## Next
 
-- F.2/B.04: `export_shots.py`
+- F.2/B.05: `bake_vat.py`
 
 ## Open issues
 
@@ -61,10 +62,6 @@ Stage F: 8/29 · updated by `/ship-shot` at the end of every item.
 - `pnpm blender:*` scripts (F.2/B.07) must call the official Blender (e.g. a `BLENDER_BIN` env var), never Fedora's `/usr/bin/blender`; consider a note in `.claude/rules/blender.md` and CLAUDE.md Commands.
 - `seed_all()` seeds NumPy's legacy global generator; later scripts should prefer the returned `random.Random` stream or `numpy.random.default_rng(seed)`, and set Blender node/modifier seeds explicitly.
 
-### From the F.2/B.02 review (hand-offs)
-
-- F.2/B.04: convert `scene["mtd_markers"]` with `.to_dict()` before `json.dumps`; each shot's first and last `CameraKey` sit on marker frames (1, 90) and the last shot ends at `scene.frame_end` (150).
-
 ### From the F.2/B.03 review (hand-offs)
 
 - F.3: lights arrive in glTF photometric units (Standard mode: a 3 W/m² sun exports as intensity 2049 lux); materials export `doubleSided: true` while Blender backface culling is off; ToonMaterial reads `extras` RGB values as 3-number arrays and `bands` as a number.
@@ -72,6 +69,13 @@ Stage F: 8/29 · updated by `/ship-shot` at the end of every item.
 - C1: `export_glb.py` only checks the active object / shape-key action per object; extend the clip check to NLA-track and armature actions when one rig carries many clips.
 - C1: rigs export their rest pose from `frame_start`: key a neutral pose there, or export with `pose_position = 'REST'`.
 - `export_glb.py` pins the glTF add-on to 5.2 (`TESTED_GLTF_ADDON`); after a Blender upgrade, re-run the F.2/B.03 probes (incl. the warning-capture probe) before bumping it.
+
+### From the F.2/B.04 review (hand-offs)
+
+- F.3/W.01: `shots/*.json` is `{ act, fps, shots, markers, gates }`; `CameraKey` has an extra optional `focus` (meters) not in the TDD type (update the TDD interface too); keys strictly ascending from t 0 to 1, `ease` absent on each shot's last key; `scrollLength` for scrub and `duration` for beat; `markers: [{id, shot, t}]` are named points (`{"kind": "marker"}` entries in Blender). Keep `TOP_KEYS` / `SHOT_KEYS` in `export_shots.py` in sync with the zod schema.
+- F.3/W.06: `pos` / `target` are already Y-up meters and `fov` is already the vertical angle (three.js `PerspectiveCamera.fov`) for 16:9; widen it for mobile portrait, don't recompute it. `target` = position + forward × focus, so don't treat `focus` as a subject distance. `power1.inOut` only approximates Blender's Bézier between keys: take parity stills at key times.
+- Hard cuts between shots fail the export for now; decide a cut convention when the first story cut needs one. Stills should render without depth-of-field blur (F.2/B.06).
+- Before Stage 3: `pov` shots have no Blender authoring path yet (the exporter always samples `scene.camera`).
 
 ### Environment
 

@@ -1,7 +1,7 @@
 # Build order: Stage F: Foundation and parity setup (F.1–F.4)
 
 - Status: IN PROGRESS
-- Progress: 8/29
+- Progress: 9/29
 - Generated: 2026-11-09
 - Milestone: M0 Setup + M2 Core systems (tdd › Milestones); F.3 materials touch M3 (see Open questions)
 - Prerequisite: none (F is the first stage): OK
@@ -75,7 +75,7 @@
   - Source: plan › Foundation › F.2 (export_glb.py); tdd › Export settings and formats; plan › Parity rules (Scale and axes, Character lights)
   - Done when: headless export of `test_cube` writes a GLB whose cube extras, clip and light are readable by `gltf-transform inspect`
 
-- [ ] **F.2/B.04: `export_shots.py`** · `Export`
+- [x] **F.2/B.04: `export_shots.py`** · `Export`
   - Build: samples the camera at every Blender key (not per frame) → `CameraKey { t, pos, target, fov, roll, ease }` with focus distance; markers split shots, the scene property `mtd_markers` (keyed by marker name; markers can't hold custom properties) sets `mode`, `scrollLength`/`duration`, camera `main|pov`; writes `shots/<act>.json` in the TDD Shot format; **merges** existing `events` and gates by shot id
   - Files: blender/scripts/export_shots.py, shots/test.json
   - Depends on: F.2/B.02
