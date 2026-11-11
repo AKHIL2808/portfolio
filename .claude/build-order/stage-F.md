@@ -1,7 +1,7 @@
 # Build order: Stage F: Foundation and parity setup (F.1–F.4)
 
 - Status: IN PROGRESS
-- Progress: 9/29
+- Progress: 10/29
 - Generated: 2026-11-09
 - Milestone: M0 Setup + M2 Core systems (tdd › Milestones); F.3 materials touch M3 (see Open questions)
 - Prerequisite: none (F is the first stage): OK
@@ -82,7 +82,7 @@
   - Source: plan › Foundation › F.2 (export_shots.py); tdd › Core systems › 2 Shot data format; .claude/rules/blender.md › Script rules
   - Done when: `shots/test.json` has both test shots with keys sorted by `t` from 0 to 1; a hand-added event survives a re-export unchanged
 
-- [ ] **F.2/B.05: `bake_vat.py`** · `Export`
+- [x] **F.2/B.05: `bake_vat.py`** · `Export`
   - Build: animated mesh → position + normal VAT textures (≤ 512 × 512 per clip set, half-float EXR or 16-bit PNG, Non-Color) + JSON metadata (frame count, fps, bounds, clip ranges) into `raw-assets/vat/`
   - Files: blender/scripts/bake_vat.py, raw-assets/vat/
   - Depends on: F.2/B.02

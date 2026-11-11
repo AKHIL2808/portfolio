@@ -68,7 +68,7 @@ Environments and props: kits, not one-offs; repeated pieces exported once and in
 - Timeline markers can't hold custom properties (Blender 5.2), so each marker's `mode`, `scrollLength` / `duration` and `camera` live in the scene property `mtd_markers = { "<marker name>": { … } }`; `export_shots.py` reads them from there.
 - Markers that aren't shot starts (hand-offs such as `T01-handoff`, cut points such as `4R6-C1`) get the `mtd_markers` entry `{"kind": "marker"}`; they're exported as named points (`markers: [{id, shot, t}]`) and don't split shots.
 - VFX proxies carry the object custom property `vfx_proxy = True`; `render_stills.py` hides them in parity stills.
-- Loop clips key their closing pose one frame past the period (a 60-frame spin keys 360° at frame 61), so frames `[start, end)` are the loop's distinct frames.
+- Loop clips key their closing pose one frame past the period (a 60-frame spin keys 360° at frame 61), so frames `[start, end)` are the loop's distinct frames. One-shot clips (no `_loop`) end on their last key, which is included.
 - `export_shots.py` samples one keyframe per Blender key (not per frame) and **merges** existing events and gates by shot id; it never drops hand-added events.
 - Never hand-edit exported GLBs or camera keys in `public/` or `shots/`; fix in Blender and re-export.
 - Imported/third-party assets: CC0 or royalty-free only, logged in `raw-assets/LICENSES.md`. Designs are original (see `docs/plan.md` › The cast).

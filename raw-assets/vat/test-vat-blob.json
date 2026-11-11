@@ -1,0 +1,35 @@
+{
+  "object": "test_vat_blob",
+  "vertexCount": 162,
+  "fps": 30,
+  "width": 162,
+  "height": 30,
+  "rowsPerFrame": 1,
+  "frameCount": 30,
+  "rowOrder": "top-down",
+  "indexAttribute": "_vat_index",
+  "bounds": {
+    "min": [
+      -0.54,
+      0.0,
+      -0.54
+    ],
+    "max": [
+      0.54,
+      1.08,
+      0.54
+    ]
+  },
+  "clips": [
+    {
+      "name": "test_vat_blob_pulse_loop",
+      "start": 0,
+      "frames": 30,
+      "loop": true,
+      "row": 0
+    }
+  ],
+  "position": "test-vat-blob.pos.exr",
+  "normal": "test-vat-blob.nrm.exr",
+  "space": "object, y-up (x, z, -y), meters"
+}

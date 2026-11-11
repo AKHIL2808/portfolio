@@ -1,6 +1,6 @@
 # Progress log
 
-Stage F: 9/29 · updated by `/ship-shot` at the end of every item.
+Stage F: 10/29 · updated by `/ship-shot` at the end of every item.
 
 ## Done
 
@@ -13,10 +13,11 @@ Stage F: 9/29 · updated by `/ship-shot` at the end of every item.
 - F.2/B.02: Test scene — cube, camera, markers (2026-11-11): `build_test.py` → `blender/scenes/test-cube.blend` with a spinning cube + sun (`test_cube`), 4-key camera, shots `test-1` (scrub, 2) and `test-2` (beat, 2 s), a pulsing VAT blob and a tagged VFX ring; marker properties live in scene property `mtd_markers`
 - F.2/B.03: `export_glb.py` (2026-11-11): exports named collections to `raw-assets/models/<name>.glb` (+Y up, modifiers applied, extras, clips sampled per frame from 0 s, morphs, Standard-mode lights); never exports cameras or `vfx_proxy` objects; refuses parity drift, exporter warnings and failed GLB checks (exit 1); `raw-assets/models/test-cube.glb`
 - F.2/B.04: `export_shots.py` (2026-11-11): splits the scene camera at markers into shots (`mtd_markers`), samples each Blender key into Y-up `CameraKey`s with vertical fov, roll, focus and ease; merges hand-added events and gates by shot id; `{"kind": "marker"}` entries become named points; `shots/test.json`
+- F.2/B.05: `bake_vat.py` (2026-11-11): bakes named clips of one mesh into half-float RGBA ZIP EXRs (positions, normals; object space, Y-up, column = Blender vertex index, rows top-down) + JSON layout (`frameCount`, `fps`, bounds, clips with `loop`, `indexAttribute`); `raw-assets/vat/test-vat-blob.*`
 
 ## Next
 
-- F.2/B.05: `bake_vat.py`
+- F.2/B.06: `render_stills.py` (stills + preview)
 
 ## Open issues
 
@@ -76,6 +77,13 @@ Stage F: 9/29 · updated by `/ship-shot` at the end of every item.
 - F.3/W.06: `pos` / `target` are already Y-up meters and `fov` is already the vertical angle (three.js `PerspectiveCamera.fov`) for 16:9; widen it for mobile portrait, don't recompute it. `target` = position + forward × focus, so don't treat `focus` as a subject distance. `power1.inOut` only approximates Blender's Bézier between keys: take parity stills at key times.
 - Hard cuts between shots fail the export for now; decide a cut convention when the first story cut needs one. Stills should render without depth-of-field blur (F.2/B.06).
 - Before Stage 3: `pov` shots have no Blender authoring path yet (the exporter always samples `scene.camera`).
+
+### From the F.2/B.05 review (hand-offs)
+
+- F.2/B.07: `pnpm assets` copies `raw-assets/vat/*.exr` and `*.json` to `public/vat/` unchanged (never KTX2: it would destroy the precision); count them in the act's asset budget.
+- Web `VATCrowd` (Stage 3 / Act 7): load with three's `EXRLoader`, `NoColorSpace`, `NearestFilter`, no mipmaps, no `flipY`, half-float type; texel `u = (col + 0.5) / width`, `v = 1 − (row + 0.5) / height` (`rowOrder: top-down`); a unit test should check one known row. Each clip carries `loop`; one-shots include their last pose.
+- Stage 3 crowd GLB: `export_glb.py` must write the `_vat_index` vertex attribute (Blender vertex index; glTF splits and reorders vertices) and fail if it's missing on a VAT mesh.
+- Stage 3 / C: test the armature-driven bake (OBJECT slot on the armature) with the first weak demon; crowd meshes smooth-shaded, origin at the feet, no topology-changing modifiers (Solidify outlines, Subdivision); an ~800-vertex demon uses 2 rows per frame, so ≈ 256 frames total per 512-row texture (split the clip set if more).
 
 ### Environment
 
