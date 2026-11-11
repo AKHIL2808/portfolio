@@ -166,10 +166,13 @@ pnpm dev | pnpm build | pnpm typecheck | pnpm lint
 pnpm test                        # Vitest: content schemas, shot data, systems
 pnpm test:e2e                    # Playwright: flow, parity, fallbacks
 pnpm blender:export <act>        # export_glb.py + export_shots.py + bake_vat.py, headless
-pnpm blender:stills <shot>       # render_stills.py: 1–3 key frames, Eevee 1920×1080, VFX proxies hidden
+pnpm blender:stills <shot> <t…>  # render_stills.py: 1–3 shot-relative t (0–1, ≤ 3 decimals), Eevee 1920×1080, VFX proxies hidden, + preview .mp4
 pnpm assets                      # optimize raw-assets/ into public/
 
-blender --background --python blender/scripts/build_act1.py   # rebuild a scene from scratch
+~/Applications/blender-5.2.4-linux-x64/blender --background --factory-startup --python blender/scripts/build_act1.py   # rebuild a scene from scratch
+
+# Blender: the official 5.2 build only. The pnpm commands use $BLENDER_BIN (default ~/Applications/blender-5.2.4-linux-x64/blender);
+# Fedora's /usr/bin/blender has no AgX and fails the parity check.
 ```
 
 These `pnpm` scripts don't exist until F.1/F.2 create them. CI (GitHub Actions) runs typecheck, lint, unit tests, e2e and Lighthouse on every push; a failing check blocks merging into `main`. Dev pages: `/dev/shot?shot=1.5&t=0.5` (freeze any moment, VFX off, fixed seed), `/dev/stitch?from=1.4&to=1.6` (loop a range), `/dev/character`.

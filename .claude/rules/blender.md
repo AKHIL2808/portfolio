@@ -15,7 +15,7 @@ Companion to the root `CLAUDE.md`, for every `<shot>/B` item. Source: `docs/tdd.
 3. **Shade:** `MTD_Toon` node group + Solidify outline from the library; environments baked with Cycles into one texture per piece.
 4. **Rig and animate:** shared Rigify layout; one action per move, `<character>_<move>`.
 5. **Lay out the film:** camera keys for the shot; check timing against the plan's mode and duration (beat seconds or scrub percent).
-6. **Render and approve:** `pnpm blender:stills <shot>` for the stills the plan lists, plus a preview `.mp4`. Only the user approves (`/approve-shot`).
+6. **Render and approve:** `pnpm blender:stills <shot> <t…>` for the stills the plan lists (shot-relative `t`), plus a preview `.mp4`. Only the user approves (`/approve-shot`).
 7. **Export:** `pnpm blender:export <act>` (GLB + clips, shot JSON, VAT), then `pnpm assets`.
 
 Live building goes through the Blender MCP so the user can watch; **the final state is always saved in a script** under `blender/scripts/`, and the scene must rebuild headless from it.
@@ -66,6 +66,7 @@ Environments and props: kits, not one-offs; repeated pieces exported once and in
 - Collections `act<N>_<thing>`; actions `<character>_<move>`; `text_anchor`, `video_anchor`, `form_anchor`, `label_anchor` empties where HTML will sit.
 - Hinged objects have their origin at the hinge (tatami, floorboards, door panels, bamboo fountain).
 - Timeline markers can't hold custom properties (Blender 5.2), so each marker's `mode`, `scrollLength` / `duration` and `camera` live in the scene property `mtd_markers = { "<marker name>": { … } }`; `export_shots.py` reads them from there.
+- Each scene's build script sets the scene property `mtd_export = {"glb": [<collection>…], "vat": [{"object", "clips": […]}]}`; `pnpm blender:export <act>` exports exactly that (plus the act's shots) from `blender/scenes/<act>.blend` or `<act>-*.blend`. Blender runs only as the official 5.2 build (`$BLENDER_BIN`).
 - Markers that aren't shot starts (hand-offs such as `T01-handoff`, cut points such as `4R6-C1`) get the `mtd_markers` entry `{"kind": "marker"}`; they're exported as named points (`markers: [{id, shot, t}]`) and don't split shots.
 - VFX proxies carry the object custom property `vfx_proxy = True`; `render_stills.py` hides them in parity stills.
 - Loop clips key their closing pose one frame past the period (a 60-frame spin keys 360° at frame 61), so frames `[start, end)` are the loop's distinct frames. One-shot clips (no `_loop`) end on their last key, which is included.

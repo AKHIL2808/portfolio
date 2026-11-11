@@ -1,7 +1,7 @@
 # Build order: Stage F: Foundation and parity setup (F.1–F.4)
 
 - Status: IN PROGRESS
-- Progress: 11/29
+- Progress: 12/29
 - Generated: 2026-11-09
 - Milestone: M0 Setup + M2 Core systems (tdd › Milestones); F.3 materials touch M3 (see Open questions)
 - Prerequisite: none (F is the first stage): OK
@@ -96,9 +96,9 @@
   - Source: plan › Foundation › F.2 (render_stills.py); plan › The parity test step 1; .claude/commands/approve-shot.md (preview path)
   - Done when: headless run on the test scene writes stills at the requested frames and a playable mp4; objects tagged as VFX proxies are absent from stills
 
-- [ ] **F.2/B.07: pnpm commands + `optimize-assets.mjs`; test-cube stills approved** · `Export`
+- [x] **F.2/B.07: pnpm commands + `optimize-assets.mjs`; test-cube stills approved** · `Export`
   - Build: `pnpm blender:export <act>` (export_glb + export_shots + bake_vat, headless), `pnpm blender:stills <shot>`, `pnpm assets` (`scripts/optimize-assets.mjs`: gltf-transform meshopt + KTX2, VAT copied without KTX2, `raw-assets/` → `public/`); render the test-cube stills and have them approved
-  - Files: package.json, scripts/optimize-assets.mjs, public/models/test-cube.glb, blender/renders/stills/test/, blender/renders/APPROVALS.md
+  - Files: package.json, scripts/blender.mjs, scripts/optimize-assets.mjs, blender/scripts/export_act.py, blender/scripts/build_test.py (`mtd_export`), public/models/test-cube.glb, public/vat/, blender/renders/stills/test-1/, blender/renders/previews/test-1.mp4, blender/renders/APPROVALS.md
   - Stills: test-cube shot start, middle
   - Depends on: F.2/B.03, F.2/B.04, F.2/B.05, F.2/B.06, F.1/W.02
   - Source: plan › Foundation › F.2 (Commands); tdd › Asset pipeline step 7, › Export settings and formats; tdd › Milestones › M0
@@ -243,6 +243,6 @@
 - ✅ **MTD_Toon library vs F.3 materials** (resolved 2026-11-11 in F.2/B.02: no node group in F.2; the test cube's material carries the toon values as custom properties for F.3/W.11; visual match in C1): plan › F.3 says ToonMaterial and InkOutline must match "the Blender library", but plan › F.2 doesn't list building `MTD_Toon` + the outline in `blender/library/` (tdd puts it in M3). Should a minimal `MTD_Toon` node group + Solidify outline be added to F.2 (e.g. in F.2/B.02) so F.3/W.11 can be parity-checked, or is F.3/W.11 checked only against custom properties now and visually in C1?
 - **Parity image comparison library:** a similarity score ≥ 0.90 against a Blender still needs an image-diff library (e.g. pixelmatch + pngjs, or an SSIM package); none is on the allowed list. Playwright's `toHaveScreenshot` only compares against its own baselines. Approve a library, or write the comparison in-house?
 - ✅ **Test scene naming** (resolved 2026-11-11 in F.2/B.02: confirmed as proposed; shots `test-1` scrub / `test-2` beat): the plan has no name for the test scene; this file proposes `blender/scripts/build_test.py`, `blender/scenes/test-cube.blend`, collection `test_cube`, `shots/test.json` and a dev-only test act outside `act0…act7`. Confirm.
-- **Approval of the test-cube stills:** F.2/B.07 records them in `blender/renders/APPROVALS.md` so F.4/W.03 has an approved reference. Confirm that a non-story row belongs in that file.
+- ✅ **Approval of the test-cube stills** (resolved 2026-11-12 in F.2/B.07: the director approved `test-1`; a non-story row in `blender/renders/APPROVALS.md` is fine): F.2/B.07 records them in `blender/renders/APPROVALS.md` so F.4/W.03 has an approved reference. Confirm that a non-story row belongs in that file.
 - ✅ **Preview mp4 encoding** (resolved 2026-11-11 in F.2/B.06: `render_stills.py` writes `previews/<unit-slug>.mp4`, H.264 yuv420p 960 × 540 via Blender's FFmpeg output, checked with ffprobe): `/approve-shot` expects `render_stills.py` (or a sibling) to write `previews/<unit-slug>.mp4`; plan › F.2 only names stills. Folded into F.2/B.06; confirm, and confirm ffmpeg/Blender's FFmpeg output is acceptable.
-- **KTX-Software** must be installed on the machine and in CI for `pnpm assets`; it is a system tool, not an npm package.
+- **KTX-Software** (updated 2026-11-12, F.2/B.07: only needed once a GLB has textures; `pnpm assets` fails clearly without `ktx` ≥ 4.4; CI doesn't run `pnpm assets`) must be installed on the machine and in CI for `pnpm assets`; it is a system tool, not an npm package.
