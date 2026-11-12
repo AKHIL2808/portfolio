@@ -1,6 +1,6 @@
 # Progress log
 
-Stage F: 12/29 · updated by `/ship-shot` at the end of every item.
+Stage F: 13/29 · updated by `/ship-shot` at the end of every item.
 
 ## Done
 
@@ -17,12 +17,22 @@ Stage F: 12/29 · updated by `/ship-shot` at the end of every item.
 - F.2/B.06: `render_stills.py` (stills + preview) (2026-11-11): renders 1–3 stills of a shot at shot-relative `t` (subframes honoured; 1920 × 1080 PNG, VFX proxies and their children hidden, DOF off, byte-identical re-renders) + `index.json`, and an H.264 preview (960 × 540, proxies as authored, transitions ±2 s); transitions accept `T0→1` or `T01` → folder `t0-1`
 - test-1/B approved and exported (2026-11-12): test-cube stills `blender/renders/stills/test-1/t0.000.png`, `t0.500.png` + preview `previews/test-1.mp4`; first row in `blender/renders/APPROVALS.md` (the first parity reference, F.4/W.03)
 - F.2/B.07: pnpm commands + `optimize-assets.mjs`; test-cube stills approved (2026-11-12): `pnpm blender:export <act>` (scene property `mtd_export` → `export_act.py`, all checks before any write), `pnpm blender:stills <shot> <t…>` (finds the shot's scene), `pnpm assets` (dedup → prune → KTX2 when textured → meshopt, verified against the raw GLB, VAT copied; all-or-nothing); Blender via `BLENDER_BIN` (official 5.2.x, `--disable-autoexec`); proven from a clean checkout. **F.2 complete.**
+- F.3/W.01: Store and shot data types (2026-11-12): Zustand `AppState` exactly as tdd › 10 (`src/store/useStore.ts`; `setTimeScale` sets at once until W.02); `ActId` (act0–act7 + dev `test`), `ActModule`, placeholder `AssetManifest` and shot types inferred from zod (`src/experience/director/types.ts`); strict `ShotFileSchema` + `parseShotFile` mirroring `export_shots.py` (`src/lib/schemas.ts`, imports only zod): keys 0→1 strictly increasing, `t` in 0–1, cue registry `CUE_NAMES` (`taiko`, `taiko-double`; each act adds its cues), gate events must name a gate in the file, errors as `file › shot id › path`
 
 ## Next
 
-- F.3/W.01: Store and shot data types
+- F.3/W.02: Time system — `useActFrame` and time scale
 
 ## Open issues
+
+### From the F.3/W.01 review (no blockers; for later items)
+
+- Optional fixes not applied: `resolveGate` no-op when already done; fold the ramp case into the `setTimeScale` test and rename the store key-set test (it must be updated whenever an item adds a store field); `ActModule.shots` as `readonly`; comment that `StoryActId` is the type for the menu/registry; polish (export `Vec3`, `key` helper return type, pair the 0–1 reject cases, split `formatPath`, note the import guard only sees `from` imports, an id character pattern).
+- Title-card / shake / custom systems: replace `AnyPayload` with strict payload schemas in the same PR; render title text only as React text (no `dangerouslySetInnerHTML` / `innerHTML`); `custom` handlers come from a fixed registry.
+- F.3/W.05 gates: components select one gate (`useStore(s => s.gates[id])`), not the whole object; check existence with `Object.hasOwn`.
+- F.3/W.03/W.04: don't write `actProgress` to the store at 60 Hz; keep the exact value in a ref for the frame loop and write the store rarely.
+- F.3/W.04/W.06: import each `shots/<act>.json` inside its act's dynamic chunk; parse once at act load; build camera curves then, never per frame.
+- Act 7 contact schema: its own clearly marked section in `schemas.ts`; don't reuse the shot-file error formatter; never echo validation issues in the API response.
 
 ### Stage F open questions (`.claude/build-order/stage-F.md`)
 
