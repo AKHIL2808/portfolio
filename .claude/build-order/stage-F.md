@@ -1,7 +1,7 @@
 # Build order: Stage F: Foundation and parity setup (F.1–F.4)
 
 - Status: IN PROGRESS
-- Progress: 12/29
+- Progress: 13/29
 - Generated: 2026-11-09
 - Milestone: M0 Setup + M2 Core systems (tdd › Milestones); F.3 materials touch M3 (see Open questions)
 - Prerequisite: none (F is the first stage): OK
@@ -106,7 +106,7 @@
 
 ## 3. F.3 · Core web systems
 
-- [ ] **F.3/W.01: Store and shot data types** · `Web`
+- [x] **F.3/W.01: Store and shot data types** · `Web`
   - Build: Zustand `AppState` (actId, actProgress, timeScale, quality, muted, reducedMotion, gates, visitedPillars, defeatedRanks; goToAct, setTimeScale, resolveGate); `ActId`, `Shot`, `CameraKey`, `ShotEvent`, `Gate`, `ActModule` types; zod schema for `shots/*.json`
   - Files: src/store/useStore.ts, src/lib/schemas.ts, src/experience/director/types.ts, tests/unit/shots.test.ts
   - Depends on: F.1/W.02, F.2/B.04
