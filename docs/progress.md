@@ -1,6 +1,6 @@
 # Progress log
 
-Stage F: 13/29 · updated by `/ship-shot` at the end of every item.
+Stage F: 14/29 · updated by `/ship-shot` at the end of every item.
 
 ## Done
 
@@ -18,12 +18,20 @@ Stage F: 13/29 · updated by `/ship-shot` at the end of every item.
 - test-1/B approved and exported (2026-11-12): test-cube stills `blender/renders/stills/test-1/t0.000.png`, `t0.500.png` + preview `previews/test-1.mp4`; first row in `blender/renders/APPROVALS.md` (the first parity reference, F.4/W.03)
 - F.2/B.07: pnpm commands + `optimize-assets.mjs`; test-cube stills approved (2026-11-12): `pnpm blender:export <act>` (scene property `mtd_export` → `export_act.py`, all checks before any write), `pnpm blender:stills <shot> <t…>` (finds the shot's scene), `pnpm assets` (dedup → prune → KTX2 when textured → meshopt, verified against the raw GLB, VAT copied; all-or-nothing); Blender via `BLENDER_BIN` (official 5.2.x, `--disable-autoexec`); proven from a clean checkout. **F.2 complete.**
 - F.3/W.01: Store and shot data types (2026-11-12): Zustand `AppState` exactly as tdd › 10 (`src/store/useStore.ts`; `setTimeScale` sets at once until W.02); `ActId` (act0–act7 + dev `test`), `ActModule`, placeholder `AssetManifest` and shot types inferred from zod (`src/experience/director/types.ts`); strict `ShotFileSchema` + `parseShotFile` mirroring `export_shots.py` (`src/lib/schemas.ts`, imports only zod): keys 0→1 strictly increasing, `t` in 0–1, cue registry `CUE_NAMES` (`taiko`, `taiko-double`; each act adds its cues), gate events must name a gate in the file, errors as `file › shot id › path`
+- F.3/W.02: Time system — `useActFrame` and time scale (2026-11-22): `src/experience/systems/time/`: pure allocation-free ramp clock (`power1.inOut`, retargets from the live value, lands exactly on the target); one shared clock stepped on `gsap.ticker` in real time, `gsap.globalTimeline.timeScale()` synced only on change (`installTimeSystem()` idempotent, called by W.04); `useActFrame((state, scaledDelta, delta) => …)` with real `delta` as the third argument; store's `setTimeScale` holds the **target**, live value via `getTimeScale()`; header rules for later items (`scrub: true`, HUD on CSS, timers on `setTimeout`)
 
 ## Next
 
-- F.3/W.02: Time system — `useActFrame` and time scale
+- F.3/W.03: Scroll system — Lenis + ScrollTrigger
 
 ## Open issues
+
+### From the F.3/W.02 review (no blockers)
+
+- Not applied: cap `delta` (e.g. 0.1 s) in `useActFrame` so the first frame after a hidden tab doesn't make mixers and particles jump; decide before Stage C's first animated character. Polish: mark `tickTimeSystem` internal; comment that `rampTo` to the current value cancels a running ramp; note the source-text "no allocations" tests are a tripwire (delete, don't loosen, if a reformat breaks them).
+- The store now imports GSAP (via `timeSystem`, not the barrel, so no R3F/three): `/cv` must never import the store. Check GSAP isn't counted twice when measuring the first bundle.
+- "Scrub shots not slowed" is only a rule in `timeSystem.ts` for now: W.03/W.04/W.06 must add a test that proves it (ScrollTrigger `scrub: true`, camera follows scroll progress).
+- W.04: install the time system once at the Experience root, not per act.
 
 ### From the F.3/W.01 review (no blockers; for later items)
 

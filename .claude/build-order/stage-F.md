@@ -1,7 +1,7 @@
 # Build order: Stage F: Foundation and parity setup (F.1–F.4)
 
 - Status: IN PROGRESS
-- Progress: 13/29
+- Progress: 14/29
 - Generated: 2026-11-09
 - Milestone: M0 Setup + M2 Core systems (tdd › Milestones); F.3 materials touch M3 (see Open questions)
 - Prerequisite: none (F is the first stage): OK
@@ -113,7 +113,7 @@
   - Source: plan › Foundation › F.3 (Store); tdd › Core systems › 1, 2, 10; tdd › Testing (Shot data)
   - Done when: `shots/test.json` parses; Vitest rejects unsorted keys, `t` outside 0–1, unknown cue names and gates that don't exist
 
-- [ ] **F.3/W.02: Time system — `useActFrame` and time scale** · `Web`
+- [x] **F.3/W.02: Time system — `useActFrame` and time scale** · `Web`
   - Build: `useActFrame((state, scaledDelta) => …)`; `setTimeScale(to, rampSeconds)` tween; `gsap.globalTimeline.timeScale()` kept in sync; scrub shots not slowed
   - Files: src/experience/systems/time/, tests/unit/time.test.ts
   - Depends on: F.3/W.01
