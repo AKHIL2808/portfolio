@@ -1,7 +1,7 @@
 # Build order: Stage F: Foundation and parity setup (F.1–F.4)
 
 - Status: IN PROGRESS
-- Progress: 14/29
+- Progress: 15/29
 - Generated: 2026-11-09
 - Milestone: M0 Setup + M2 Core systems (tdd › Milestones); F.3 materials touch M3 (see Open questions)
 - Prerequisite: none (F is the first stage): OK
@@ -120,7 +120,7 @@
   - Source: plan › Foundation › F.3 (useActFrame with time scale); tdd › Core systems › 4
   - Done when: Vitest proves ramp values over time and GSAP sync; no allocations inside the hook's frame callback
 
-- [ ] **F.3/W.03: Scroll system — Lenis + ScrollTrigger** · `Web`
+- [x] **F.3/W.03: Scroll system — Lenis + ScrollTrigger** · `Web`
   - Build: Lenis driving ScrollTrigger (`lenis.on('scroll', ScrollTrigger.update)`, GSAP ticker calls `lenis.raf`); `lockScroll()` / `unlockScroll()`; Space and Arrow Down advance, Arrow Up goes back within an act; touch smoothing off on mobile
   - Files: src/experience/systems/scroll/
   - Depends on: F.3/W.01

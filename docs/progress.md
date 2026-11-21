@@ -1,6 +1,6 @@
 # Progress log
 
-Stage F: 14/29 · updated by `/ship-shot` at the end of every item.
+Stage F: 15/29 · updated by `/ship-shot` at the end of every item.
 
 ## Done
 
@@ -19,18 +19,27 @@ Stage F: 14/29 · updated by `/ship-shot` at the end of every item.
 - F.2/B.07: pnpm commands + `optimize-assets.mjs`; test-cube stills approved (2026-11-12): `pnpm blender:export <act>` (scene property `mtd_export` → `export_act.py`, all checks before any write), `pnpm blender:stills <shot> <t…>` (finds the shot's scene), `pnpm assets` (dedup → prune → KTX2 when textured → meshopt, verified against the raw GLB, VAT copied; all-or-nothing); Blender via `BLENDER_BIN` (official 5.2.x, `--disable-autoexec`); proven from a clean checkout. **F.2 complete.**
 - F.3/W.01: Store and shot data types (2026-11-12): Zustand `AppState` exactly as tdd › 10 (`src/store/useStore.ts`; `setTimeScale` sets at once until W.02); `ActId` (act0–act7 + dev `test`), `ActModule`, placeholder `AssetManifest` and shot types inferred from zod (`src/experience/director/types.ts`); strict `ShotFileSchema` + `parseShotFile` mirroring `export_shots.py` (`src/lib/schemas.ts`, imports only zod): keys 0→1 strictly increasing, `t` in 0–1, cue registry `CUE_NAMES` (`taiko`, `taiko-double`; each act adds its cues), gate events must name a gate in the file, errors as `file › shot id › path`
 - F.3/W.02: Time system — `useActFrame` and time scale (2026-11-22): `src/experience/systems/time/`: pure allocation-free ramp clock (`power1.inOut`, retargets from the live value, lands exactly on the target); one shared clock stepped on `gsap.ticker` in real time, `gsap.globalTimeline.timeScale()` synced only on change (`installTimeSystem()` idempotent, called by W.04); `useActFrame((state, scaledDelta, delta) => …)` with real `delta` as the third argument; store's `setTimeScale` holds the **target**, live value via `getTimeScale()`; header rules for later items (`scrub: true`, HUD on CSS, timers on `setTimeout`)
+- F.3/W.03: Scroll system — Lenis + ScrollTrigger (2026-11-22): `src/experience/systems/scroll/`: one Lenis (`autoRaf: false`, smooth wheel, native touch, `respectReducedMotion`) driving `ScrollTrigger.update`, `raf` on `gsap.ticker` in real time (default lag smoothing kept); named locks (`lockScroll(reason?)` / `unlockScroll(reason?)`, locked until every reason is released); Space / Arrow Down → next stop, Arrow Up → previous, clamped to the act (`setScrollStops` provider for W.04; default one screen, whole page); key-ignore rules (modifiers, repeating Space, inputs, Space on buttons/links); dev-only `/dev/scroll` (404 in production) + first Playwright smoke test (5 tests, incl. mutation-checked "`scrub: true` isn't slowed by slow motion"); `test:e2e` no longer passes with no tests
 
 ## Next
 
-- F.3/W.03: Scroll system — Lenis + ScrollTrigger
+- F.3/W.04: Director — act registry, scrub and beat playback, events
 
 ## Open issues
+
+### From the F.3/W.03 review (no blockers)
+
+- Not applied: (1) `keyAction` also ignores keys another handler already claimed (`defaultPrevented`); W.07's Space-hold relies on it (it must `preventDefault()` and run before the scroll listener, or in capture phase). Add the one-line test and a header note, or drop the rule, in W.07 at the latest. (2) `playwright.config.ts`: `reuseExistingServer: !process.env.CI` so CI never tests a stale server on port 3000. Also: note that `ScrollStops` are absolute page px (same space as `lenis.targetScroll`); comment or remove the redundant `isStopped` check; mark test-only resets `@internal`.
+- W.04: ScrollTrigger skips scrub tweens for 0.5 s after it registers (a `gsap.delayedCall` on the global timeline, so slow motion stretches it). Register and refresh ScrollTrigger early, at time scale 1 (loading screen), before any act scrubs. Never work around it with a numeric scrub or a lag-smoothing change.
+- W.04: the stops provider runs per key press; return precomputed per-act `ScrollStops`, not fresh arrays.
+- F.4 dev pages (`/dev/shot`, `/dev/stitch`, `/dev/character`): one `src/app/dev/layout.tsx` that 404s in production instead of a guard per page.
+- e2e: the 300–500 ms fixed waits (asserting "didn't move") are the likeliest flake source once CI runs e2e; prefer the `settle` helper. The dev page's 700 ms ready delay assumes ScrollTrigger's 0.5 s startup; recheck on a GSAP upgrade.
 
 ### From the F.3/W.02 review (no blockers)
 
 - Not applied: cap `delta` (e.g. 0.1 s) in `useActFrame` so the first frame after a hidden tab doesn't make mixers and particles jump; decide before Stage C's first animated character. Polish: mark `tickTimeSystem` internal; comment that `rampTo` to the current value cancels a running ramp; note the source-text "no allocations" tests are a tripwire (delete, don't loosen, if a reformat breaks them).
 - The store now imports GSAP (via `timeSystem`, not the barrel, so no R3F/three): `/cv` must never import the store. Check GSAP isn't counted twice when measuring the first bundle.
-- "Scrub shots not slowed" is only a rule in `timeSystem.ts` for now: W.03/W.04/W.06 must add a test that proves it (ScrollTrigger `scrub: true`, camera follows scroll progress).
+- "Scrub shots not slowed": W.03's e2e proves a `scrub: true` ScrollTrigger keeps up with scroll at time scale 0.05; W.04/W.06 must still prove the camera follows scroll progress on scrub shots.
 - W.04: install the time system once at the Experience root, not per act.
 
 ### From the F.3/W.01 review (no blockers; for later items)
@@ -55,7 +64,6 @@ Stage F: 14/29 · updated by `/ship-shot` at the end of every item.
 - `r3f-perf` 7.2.3 pulls its own `@react-three/drei` 9.122.0 (React 18 / R3F 8 peers): check it works when first used in F.3/F.4; fall back to `renderer.info` if not.
 - Load leva and r3f-perf only in development (dynamic import behind a dev check, or only on `/dev/*`).
 - Load `<Experience/>` lazily through a small client wrapper (F.3/W.04).
-- Remove `--pass-with-no-tests` from `test:e2e` once the first e2e spec exists (F.4/W.03).
 - Smaller test clean-ups: duplicate pin check in `smoke.test.ts` / `foundation.test.ts`, brittle lockfile-format test, widen the "no 3D on `/`" import guard.
 - No security headers or CSP until Act 7, so no public production deploy before then; add `poweredByHeader: false` with the headers.
 
