@@ -3,11 +3,13 @@
 // No per-frame setters live here.
 import { create } from "zustand";
 import type { ActId } from "@/experience/director/types";
+// Not the barrel: that would pull R3F and three into the store.
+import { rampTimeScale } from "@/experience/systems/time/timeSystem";
 
 export interface AppState {
   actId: ActId;
   actProgress: number; // 0..1
-  timeScale: number; // 1 = normal, 0.05 = deep slow motion
+  timeScale: number; // target: 1 = normal, 0.05 = deep slow motion (live value: getTimeScale())
   quality: "high" | "medium" | "lite";
   muted: boolean;
   reducedMotion: boolean;
@@ -34,14 +36,18 @@ export const useStore = create<AppState>()((set) => ({
   // Only the Director calls this. Wipes, mounting and loading are F.3/W.05.
   goToAct: (id) => set({ actId: id, actProgress: 0 }),
 
-  // Sets the value at once. F.3/W.02 replaces the body with the ramp tween and
-  // GSAP sync, keeping the signature.
-  setTimeScale: (to) => {
-    if (!Number.isFinite(to) || to <= 0) {
-      if (process.env.NODE_ENV !== "production") console.error(`setTimeScale: invalid value ${to}, ignored`);
+  // The store holds the TARGET, written once per call; the time system ramps the live
+  // value (and GSAP) over rampSeconds of real time. Frame code reads getTimeScale().
+  setTimeScale: (to, rampSeconds) => {
+    const badRamp = rampSeconds !== undefined && (!Number.isFinite(rampSeconds) || rampSeconds < 0);
+    if (!Number.isFinite(to) || to <= 0 || badRamp) {
+      if (process.env.NODE_ENV !== "production") {
+        console.error(`setTimeScale: invalid value ${to} (ramp ${rampSeconds}), ignored`);
+      }
       return;
     }
     set({ timeScale: to });
+    rampTimeScale(to, rampSeconds);
   },
 
   // A new object, so selectors on `gates` fire.
